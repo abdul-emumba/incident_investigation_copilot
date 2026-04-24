@@ -1,0 +1,185 @@
+{
+  "runbook_id": "RB-ORDDB-001",
+  "service": "orders-db",
+  "version": "PostgreSQL 15",
+  "last_updated": "2024-06-15",
+  "last_updated_by": "dave@example.com",
+  "owner": {
+    "team": "Commerce Platform",
+    "slack": "#commerce-platform",
+    "on_call": "pagerduty:commerce-oncall"
+  },
+  "dependencies": {
+    "hard": [
+      "aws-ebs"
+    ],
+    "soft": [
+      "s3"
+    ],
+    "upstream_consumers": [
+      "orders-service"
+    ],
+    "notes": "orders-db is a stateful Postgres cluster. EBS volume is the underlying storage \u2014 if EBS has problems, so does the DB. S3 is used for WAL archive. If S3 is unreachable, WAL archiving will fail silently and the pg_wal directory on disk will grow until disk is full. This happened in INC-4021. Check S3 connectivity as part of any disk issue investigation."
+  },
+  "common_issues": [
+    {
+      "issue_id": "ORDDB-001",
+      "title": "Disk quota exceeded \u2014 writes failing",
+      "symptoms": [
+        "orders-service returning 500 on all write operations",
+        "Postgres logs: 'could not write to file... No space left on device'",
+        "Alert fired: 'orders-db disk usage > 90%'",
+        "pg_wal directory unexpectedly large"
+      ],
+      "likely_causes": [
+        "WAL archive cron not running \u2014 WAL files accumulate in pg_wal indefinitely",
+        "S3 bucket for WAL archive unreachable \u2014 archive command failing silently",
+        "Unusual write volume (e.g., during incident with high retry rates)",
+        "Table bloat from dead tuples not being VACUUMed"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Confirm disk is full and identify largest directories",
+          "command": "kubectl exec -it orders-db-primary-0 -- df -h && du -sh /var/lib/postgresql/data/*/",
+          "note": "Check which directory is largest. Usually it's pg_wal or the main data directory. pg_wal being unexpectedly large = WAL archive problem."
+        },
+        {
+          "order": 2,
+          "action": "Check WAL archiving status",
+          "command": "kubectl exec -it orders-db-primary-0 -- psql -U postgres -c \"SELECT archived_count, failed_count, last_archived_wal, last_failed_wal, last_failed_time FROM pg_stat_archiver;\"",
+          "note": "failed_count > 0 and last_failed_time recent = archive is failing. last_archived_wal being very old = archive hasn't run in a while. Either way, WAL is accumulating on disk."
+        },
+        {
+          "order": 3,
+          "action": "Check if archive cron is running",
+          "command": "kubectl exec -it orders-db-primary-0 -- crontab -l && grep -i wal /var/log/syslog | tail -20",
+          "note": "The WAL archive cron should run every hour. If there's no crontab entry, it may have been wiped during a pod restart. This was the root cause of INC-4021."
+        },
+        {
+          "order": 4,
+          "action": "Prune WAL archive to free space \u2014 DO THIS CAREFULLY",
+          "command": "kubectl exec -it orders-db-primary-0 -- pg_archivecleanup /var/lib/postgresql/data/pg_wal/ $(psql -U postgres -t -c \"SELECT pg_walfile_name(pg_current_wal_lsn());\")",
+          "note": "pg_archivecleanup is safe to run. It only removes WAL files that are no longer needed for recovery. Do NOT manually rm files from pg_wal \u2014 you can corrupt the cluster. Get a second pair of eyes before running this."
+        },
+        {
+          "order": 5,
+          "action": "Extend EBS volume if pruning isn't enough",
+          "command": "aws ec2 modify-volume --volume-id <volume-id> --size <new-size-gb>",
+          "note": "You can extend EBS volumes online without downtime. After extending, you need to resize the filesystem too: kubectl exec -it orders-db-primary-0 -- resize2fs /dev/xvda. Volume ID is in the PVC \u2014 kubectl get pvc orders-db-pvc -o json | jq '.spec.volumeName'"
+        },
+        {
+          "order": 6,
+          "action": "Restart Postgres after recovery to clear write errors",
+          "command": "kubectl rollout restart statefulset/orders-db",
+          "note": "Postgres may be in a bad state after a disk-full event. Restart forces clean connection pool and clears cached errors. Monitor logs after restart."
+        }
+      ],
+      "escalation": "Disk full on orders-db is P1 \u2014 order writes are failing. Page commerce on-call immediately. This is time-sensitive."
+    },
+    {
+      "issue_id": "ORDDB-002",
+      "title": "Slow queries / high DB CPU",
+      "symptoms": [
+        "orders-service request latency elevated",
+        "Postgres CPU > 70% sustained",
+        "pg_stat_statements showing queries > 1 second",
+        "Admin dashboard timing out"
+      ],
+      "likely_causes": [
+        "Missing index on heavily-queried columns",
+        "Sequential scan on orders table (40M+ rows \u2014 very expensive without index)",
+        "analytics dashboard firing 14 concurrent heavy queries (known issue)",
+        "VACUUM not running \u2014 table bloat causing planner to make bad choices",
+        "N+1 query pattern from orders-service (fetches order then fetches each item separately)"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Identify slow queries",
+          "command": "kubectl exec -it orders-db-primary-0 -- psql -U postgres -c \"SELECT substring(query, 1, 100) as query, calls, round(mean_exec_time::numeric, 2) as mean_ms, round(total_exec_time::numeric, 2) as total_ms FROM pg_stat_statements ORDER BY mean_exec_time DESC LIMIT 10;\"",
+          "note": "pg_stat_statements must be in shared_preload_libraries. If you get an error, it's not enabled. The fix requires a restart \u2014 coordinate with Dave."
+        },
+        {
+          "order": 2,
+          "action": "EXPLAIN the slow query",
+          "command": "kubectl exec -it orders-db-primary-0 -- psql -U postgres -c \"EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT) <paste_slow_query_here>;\"",
+          "note": "Look for 'Seq Scan' on the orders table. If you see it, there's a missing index. 'Bitmap Heap Scan' is OK. 'Index Scan' is ideal."
+        },
+        {
+          "order": 3,
+          "action": "Add missing index without locking",
+          "command": "kubectl exec -it orders-db-primary-0 -- psql -U postgres -c \"CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_<name> ON orders(<columns>);\"",
+          "note": "Always use CONCURRENTLY in production. This takes longer but doesn't lock the table. Monitor progress: SELECT phase, blocks_done, blocks_total FROM pg_stat_progress_create_index;"
+        },
+        {
+          "order": 4,
+          "action": "If analytics dashboard is culprit, disable it",
+          "command": "kubectl set env deployment/orders-service ANALYTICS_DASHBOARD_ENABLED=false",
+          "note": "There's a ticket to rewrite the analytics queries against a materialized view. JIRA COM-512. Not done yet. Disabling the dashboard is the only mitigation for now."
+        },
+        {
+          "order": 5,
+          "action": "Run VACUUM if table bloat is suspected",
+          "command": "kubectl exec -it orders-db-primary-0 -- psql -U postgres -c \"VACUUM ANALYZE orders;\"",
+          "note": "VACUUM ANALYZE is safe to run concurrently with normal operations (not VACUUM FULL). It reclaims dead tuple space and updates statistics. Run during off-peak. Takes 10-30 minutes on a large table."
+        }
+      ],
+      "escalation": "If queries are causing customer-facing timeouts, escalate to P1. Otherwise P2 during business hours."
+    },
+    {
+      "issue_id": "ORDDB-003",
+      "title": "Replication lag / replica falling behind",
+      "symptoms": [
+        "Replica shows stale data compared to primary",
+        "Monitoring alert: 'replication_lag > 30s'",
+        "Read queries returning outdated results"
+      ],
+      "likely_causes": [
+        "High write volume on primary \u2014 replica can't apply WAL fast enough",
+        "Network congestion between primary and replica AZ",
+        "Replica under-resourced (less CPU/memory than primary)",
+        "Long-running query on replica holding back apply process"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Check replication lag",
+          "command": "kubectl exec -it orders-db-primary-0 -- psql -U postgres -c \"SELECT client_addr, state, sent_lsn, write_lsn, flush_lsn, replay_lsn, (sent_lsn - replay_lsn) AS replication_delay FROM pg_stat_replication;\"",
+          "note": "replication_delay in bytes. Divide by ~1MB to get rough seconds of lag. If delay is 0, replica is caught up."
+        },
+        {
+          "order": 2,
+          "action": "Check if read traffic is being routed to lagging replica",
+          "command": "kubectl get configmap orders-db-config -o json | jq '.data | fromjson | .read_replica_enabled'",
+          "note": "If read_replica_enabled is true and replica is lagging, reads may see stale data. Temporarily disable read routing: kubectl set env deployment/orders-service DB_READ_REPLICA_ENABLED=false"
+        },
+        {
+          "order": 3,
+          "action": "Check for blocking queries on replica",
+          "command": "kubectl exec -it orders-db-replica-0 -- psql -U postgres -c \"SELECT pid, query_start, state, query FROM pg_stat_activity WHERE state != 'idle' ORDER BY query_start ASC LIMIT 10;\"",
+          "note": "Long-running queries on the replica can block WAL apply. Terminate if safe to do so."
+        }
+      ],
+      "escalation": "Replication lag > 5 minutes is P2. Lag > 30 minutes or replication stopped entirely is P1 \u2014 page DBA on-call."
+    }
+  ],
+  "general_health_checks": [
+    "kubectl exec orders-db-primary-0 -- psql -U postgres -c 'SELECT 1' \u2014 should return immediately",
+    "kubectl exec orders-db-primary-0 -- df -h \u2014 disk usage should be < 75%",
+    "kubectl exec orders-db-primary-0 -- psql -U postgres -c \"SELECT count(*) FROM pg_stat_replication;\" \u2014 should show active replicas",
+    "Check Datadog: 'Orders DB' dashboard \u2014 connections, disk usage, replication lag, slow queries",
+    "kubectl exec orders-db-primary-0 -- psql -U postgres -c \"SELECT last_archived_wal, last_failed_time FROM pg_stat_archiver;\" \u2014 last_failed_time should be null"
+  ],
+  "known_gaps": [
+    "WAL archive cron restoration after pod restart is manual \u2014 not yet automated (post-INC-4021 TODO)",
+    "No runbook for point-in-time recovery (PITR) \u2014 find the DBA team if you need this",
+    "pg_stat_statements not consistently enabled across all environments",
+    "Replica failover procedure not fully tested since cluster was provisioned \u2014 JIRA PLAT-301",
+    "EBS volume extension procedure is manual \u2014 not in Terraform"
+  ],
+  "notes": "orders-db is the source of truth for all order data. Be extremely careful with any direct SQL modifications to production. Always run SELECT before UPDATE/DELETE to verify what you're about to change. Get a second set of eyes on any destructive operation. There is no undo for a bad UPDATE \u2014 only point-in-time recovery, which takes hours.",
+  "incident_examples": [
+    "INC-4021"
+  ]
+}

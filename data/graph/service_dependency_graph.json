@@ -1,0 +1,919 @@
+{
+  "metadata": {
+    "name": "Example Platform \u2014 Service Dependency Graph",
+    "version": "2024-06-17",
+    "generated_at": "2026-04-17T06:22:57Z",
+    "description": "Full directed dependency graph of the Example Platform microservices ecosystem. Includes internal services, datastores, and third-party integrations. Edges are directed: from \u2192 to means 'from depends on to'.",
+    "regions": {
+      "us-east-1": {
+        "label": "US East (N. Virginia)",
+        "role": "primary",
+        "cloud": "AWS"
+      },
+      "eu-west-1": {
+        "label": "EU West (Ireland)",
+        "role": "secondary / GDPR boundary",
+        "cloud": "AWS"
+      },
+      "ap-southeast-1": {
+        "label": "Asia Pacific (Singapore)",
+        "role": "read-only replica / CDN PoP",
+        "cloud": "AWS"
+      },
+      "global": {
+        "label": "Global (multi-PoP)",
+        "role": "CDN / WAF edge",
+        "cloud": "Cloudflare"
+      }
+    },
+    "teams": {
+      "Platform Engineering": {
+        "lead": "carol@example.com",
+        "slack": "#platform-eng",
+        "owns": [
+          "gateway",
+          "redis",
+          "kafka",
+          "s3",
+          "cloudflare",
+          "pagerduty"
+        ]
+      },
+      "Identity & Access": {
+        "lead": "alice@example.com",
+        "slack": "#identity-team",
+        "owns": [
+          "auth",
+          "user-db"
+        ]
+      },
+      "Payments Engineering": {
+        "lead": "bob@example.com",
+        "slack": "#payments-eng",
+        "owns": [
+          "payments",
+          "payments-db",
+          "stripe",
+          "bank-api"
+        ]
+      },
+      "Commerce Platform": {
+        "lead": "dave@example.com",
+        "slack": "#commerce-platform",
+        "owns": [
+          "orders",
+          "orders-db",
+          "inventory",
+          "inventory-db",
+          "notifications",
+          "sendgrid",
+          "apns-gcm"
+        ]
+      },
+      "Discovery & ML": {
+        "lead": "eve@example.com",
+        "slack": "#discovery-ml",
+        "owns": [
+          "search",
+          "elasticsearch"
+        ]
+      }
+    },
+    "legend": {
+      "node_types": {
+        "service": "Internal microservice (deployed, owned, versioned)",
+        "datastore": "Persistent storage (DB, cache, object store, message broker)",
+        "external": "Third-party / vendor dependency outside our infrastructure"
+      },
+      "edge_types": {
+        "sync": "Synchronous HTTP/gRPC/SQL call \u2014 caller blocks waiting for response",
+        "async": "Asynchronous publish/consume \u2014 caller does not block",
+        "proxy": "Traffic proxying / pass-through"
+      }
+    },
+    "stats": {
+      "total_nodes": 21,
+      "total_edges": 26,
+      "services": 7,
+      "datastores": 8,
+      "external": 6,
+      "critical_edges": 15
+    }
+  },
+  "nodes": [
+    {
+      "id": "gateway",
+      "type": "service",
+      "display_name": "API Gateway",
+      "description": "Edge proxy: TLS termination, rate limiting, routing to upstream services.",
+      "version": "1.25.0",
+      "language": "Go",
+      "owner": {
+        "team": "Platform Engineering",
+        "lead": "carol@example.com",
+        "slack": "#platform-eng",
+        "on_call": "pagerduty:platform-oncall"
+      },
+      "regions": [
+        "us-east-1",
+        "eu-west-1",
+        "ap-southeast-1"
+      ],
+      "sla": {
+        "availability_target": "99.99%",
+        "p99_latency_ms": 100
+      },
+      "repository": "github.com/example/gateway",
+      "tags": [
+        "edge",
+        "critical",
+        "public-facing"
+      ]
+    },
+    {
+      "id": "auth",
+      "type": "service",
+      "display_name": "Auth Service",
+      "description": "Handles authentication, JWT issuance/validation, OAuth2 flows, MFA, and session management.",
+      "version": "2.15.4",
+      "language": "Python",
+      "owner": {
+        "team": "Identity & Access",
+        "lead": "alice@example.com",
+        "slack": "#identity-team",
+        "on_call": "pagerduty:identity-oncall"
+      },
+      "regions": [
+        "us-east-1",
+        "eu-west-1"
+      ],
+      "sla": {
+        "availability_target": "99.95%",
+        "p99_latency_ms": 250
+      },
+      "repository": "github.com/example/auth-service",
+      "tags": [
+        "critical",
+        "security",
+        "stateful"
+      ]
+    },
+    {
+      "id": "payments",
+      "type": "service",
+      "display_name": "Payments Service",
+      "description": "Processes payment transactions, manages refunds, handles Stripe webhook events, and maintains the audit ledger.",
+      "version": "3.18.1",
+      "language": "Java",
+      "owner": {
+        "team": "Payments Engineering",
+        "lead": "bob@example.com",
+        "slack": "#payments-eng",
+        "on_call": "pagerduty:payments-oncall"
+      },
+      "regions": [
+        "us-east-1",
+        "eu-west-1"
+      ],
+      "sla": {
+        "availability_target": "99.99%",
+        "p99_latency_ms": 500
+      },
+      "repository": "github.com/example/payments-service",
+      "tags": [
+        "critical",
+        "pci-dss",
+        "financial"
+      ]
+    },
+    {
+      "id": "orders",
+      "type": "service",
+      "display_name": "Orders Service",
+      "description": "Creates and tracks orders, manages inventory reservation, publishes order lifecycle events to Kafka.",
+      "version": "4.16.2",
+      "language": "Node.js",
+      "owner": {
+        "team": "Commerce Platform",
+        "lead": "dave@example.com",
+        "slack": "#commerce-platform",
+        "on_call": "pagerduty:commerce-oncall"
+      },
+      "regions": [
+        "us-east-1",
+        "eu-west-1",
+        "ap-southeast-1"
+      ],
+      "sla": {
+        "availability_target": "99.9%",
+        "p99_latency_ms": 400
+      },
+      "repository": "github.com/example/orders-service",
+      "tags": [
+        "critical",
+        "event-driven"
+      ]
+    },
+    {
+      "id": "notifications",
+      "type": "service",
+      "display_name": "Notifications Service",
+      "description": "Sends transactional emails, push notifications, and SMS. Consumes events from Kafka topics.",
+      "version": "1.8.0",
+      "language": "Python",
+      "owner": {
+        "team": "Commerce Platform",
+        "lead": "dave@example.com",
+        "slack": "#commerce-platform",
+        "on_call": "pagerduty:commerce-oncall"
+      },
+      "regions": [
+        "us-east-1",
+        "eu-west-1"
+      ],
+      "sla": {
+        "availability_target": "99.5%",
+        "p99_latency_ms": 2000
+      },
+      "repository": "github.com/example/notifications-service",
+      "tags": [
+        "async",
+        "non-critical-path"
+      ]
+    },
+    {
+      "id": "inventory",
+      "type": "service",
+      "display_name": "Inventory Service",
+      "description": "Manages product stock levels, reserves inventory on order creation, releases on cancellation.",
+      "version": "2.4.1",
+      "language": "Go",
+      "owner": {
+        "team": "Commerce Platform",
+        "lead": "dave@example.com",
+        "slack": "#commerce-platform",
+        "on_call": "pagerduty:commerce-oncall"
+      },
+      "regions": [
+        "us-east-1",
+        "eu-west-1"
+      ],
+      "sla": {
+        "availability_target": "99.9%",
+        "p99_latency_ms": 200
+      },
+      "repository": "github.com/example/inventory-service",
+      "tags": [
+        "stateful"
+      ]
+    },
+    {
+      "id": "search",
+      "type": "service",
+      "display_name": "Search Service",
+      "description": "Product search and ranking. Wraps Elasticsearch cluster with query normalisation, ranking models, and A/B experiment routing.",
+      "version": "3.2.0",
+      "language": "Python",
+      "owner": {
+        "team": "Discovery & ML",
+        "lead": "eve@example.com",
+        "slack": "#discovery-ml",
+        "on_call": "pagerduty:discovery-oncall"
+      },
+      "regions": [
+        "us-east-1",
+        "eu-west-1"
+      ],
+      "sla": {
+        "availability_target": "99.5%",
+        "p99_latency_ms": 300
+      },
+      "repository": "github.com/example/search-service",
+      "tags": [
+        "ml",
+        "read-heavy"
+      ]
+    },
+    {
+      "id": "user-db",
+      "type": "datastore",
+      "display_name": "User Database (Postgres)",
+      "description": "Primary Postgres cluster for user accounts, credentials, and profile data. Multi-AZ with read replicas.",
+      "engine": "PostgreSQL 15",
+      "owner": {
+        "team": "Identity & Access",
+        "lead": "alice@example.com",
+        "slack": "#identity-team",
+        "on_call": "pagerduty:identity-oncall"
+      },
+      "regions": [
+        "us-east-1",
+        "eu-west-1"
+      ],
+      "replication": "synchronous multi-AZ + async cross-region replica",
+      "tags": [
+        "persistent",
+        "gdpr-sensitive",
+        "pii"
+      ]
+    },
+    {
+      "id": "orders-db",
+      "type": "datastore",
+      "display_name": "Orders Database (Postgres)",
+      "description": "Postgres cluster for order records and order event history. WAL archiving to S3.",
+      "engine": "PostgreSQL 15",
+      "owner": {
+        "team": "Commerce Platform",
+        "lead": "dave@example.com",
+        "slack": "#commerce-platform",
+        "on_call": "pagerduty:commerce-oncall"
+      },
+      "regions": [
+        "us-east-1",
+        "eu-west-1"
+      ],
+      "replication": "synchronous multi-AZ",
+      "tags": [
+        "persistent",
+        "gdpr-sensitive"
+      ],
+      "known_issues": [
+        "WAL archive cron misconfiguration caused disk exhaustion INC-4021"
+      ]
+    },
+    {
+      "id": "payments-db",
+      "type": "datastore",
+      "display_name": "Payments Database (Postgres)",
+      "description": "Postgres cluster for transaction ledger, audit log, invoice records. PCI-DSS compliant storage.",
+      "engine": "PostgreSQL 15",
+      "owner": {
+        "team": "Payments Engineering",
+        "lead": "bob@example.com",
+        "slack": "#payments-eng",
+        "on_call": "pagerduty:payments-oncall"
+      },
+      "regions": [
+        "us-east-1",
+        "eu-west-1"
+      ],
+      "replication": "synchronous multi-AZ + async cross-region replica",
+      "tags": [
+        "persistent",
+        "pci-dss",
+        "financial",
+        "audit"
+      ]
+    },
+    {
+      "id": "inventory-db",
+      "type": "datastore",
+      "display_name": "Inventory Database (Postgres)",
+      "description": "Postgres cluster for product catalogue and stock levels.",
+      "engine": "PostgreSQL 15",
+      "owner": {
+        "team": "Commerce Platform",
+        "lead": "dave@example.com",
+        "slack": "#commerce-platform",
+        "on_call": "pagerduty:commerce-oncall"
+      },
+      "regions": [
+        "us-east-1"
+      ],
+      "replication": "synchronous multi-AZ",
+      "tags": [
+        "persistent"
+      ]
+    },
+    {
+      "id": "redis",
+      "type": "datastore",
+      "display_name": "Redis Cluster (Session Cache)",
+      "description": "Shared Redis cluster for session tokens, rate-limit counters, account lockout state, and short-lived caches.",
+      "engine": "Redis 7.2",
+      "owner": {
+        "team": "Platform Engineering",
+        "lead": "carol@example.com",
+        "slack": "#platform-eng",
+        "on_call": "pagerduty:platform-oncall"
+      },
+      "regions": [
+        "us-east-1",
+        "eu-west-1",
+        "ap-southeast-1"
+      ],
+      "replication": "Redis Cluster mode, 3 shards \u00d7 2 replicas",
+      "tags": [
+        "cache",
+        "stateful",
+        "shared"
+      ],
+      "known_issues": [
+        "Eviction policy was noeviction \u2014 caused OOM write failures INC-3908",
+        "Counter reset to 0 after failover \u2014 caused duplicate invoice numbers INC-3991"
+      ]
+    },
+    {
+      "id": "elasticsearch",
+      "type": "datastore",
+      "display_name": "Elasticsearch Cluster",
+      "description": "Search index for product catalog. Rebuilt nightly from inventory-db.",
+      "engine": "Elasticsearch 8.13",
+      "owner": {
+        "team": "Discovery & ML",
+        "lead": "eve@example.com",
+        "slack": "#discovery-ml",
+        "on_call": "pagerduty:discovery-oncall"
+      },
+      "regions": [
+        "us-east-1",
+        "eu-west-1"
+      ],
+      "replication": "3-node cluster, 1 replica per shard",
+      "tags": [
+        "search",
+        "read-heavy"
+      ]
+    },
+    {
+      "id": "kafka",
+      "type": "datastore",
+      "display_name": "Kafka Cluster (Event Bus)",
+      "description": "Central event streaming platform. Topics: orders.created, orders.updated, payments.completed, notifications.queued.",
+      "engine": "Apache Kafka 3.6",
+      "owner": {
+        "team": "Platform Engineering",
+        "lead": "carol@example.com",
+        "slack": "#platform-eng",
+        "on_call": "pagerduty:platform-oncall"
+      },
+      "regions": [
+        "us-east-1",
+        "eu-west-1"
+      ],
+      "replication": "replication-factor=3, min.insync.replicas=2",
+      "tags": [
+        "event-bus",
+        "shared",
+        "stateful"
+      ],
+      "known_issues": [
+        "Broker-2 disk hit 94% during INC-4021 due to 3x write volume",
+        "Poison-pill message caused 84k-message consumer lag INC-4021"
+      ]
+    },
+    {
+      "id": "s3",
+      "type": "datastore",
+      "display_name": "AWS S3 (Object Storage)",
+      "description": "Object storage for WAL archives, CSV exports, invoice PDFs, and ML model artefacts.",
+      "engine": "AWS S3",
+      "owner": {
+        "team": "Platform Engineering",
+        "lead": "carol@example.com",
+        "slack": "#platform-eng",
+        "on_call": "pagerduty:platform-oncall"
+      },
+      "regions": [
+        "us-east-1",
+        "eu-west-1"
+      ],
+      "replication": "cross-region replication enabled",
+      "tags": [
+        "storage",
+        "shared",
+        "durable"
+      ]
+    },
+    {
+      "id": "bank-api",
+      "type": "external",
+      "display_name": "Bank Settlement API",
+      "description": "Third-party banking API for ACH/SEPA settlement. Used for payouts to merchants.",
+      "vendor": "ClearBank",
+      "owner": {
+        "team": "Payments Engineering",
+        "lead": "bob@example.com",
+        "slack": "#payments-eng",
+        "on_call": "pagerduty:payments-oncall"
+      },
+      "regions": [
+        "eu-west-1"
+      ],
+      "sla": {
+        "availability_target": "99.5%"
+      },
+      "tags": [
+        "financial",
+        "third-party",
+        "pci-dss"
+      ],
+      "circuit_breaker": true
+    },
+    {
+      "id": "stripe",
+      "type": "external",
+      "display_name": "Stripe Payment Gateway",
+      "description": "Card payment processing. Used for all customer-facing card charges, refunds, and webhook events.",
+      "vendor": "Stripe",
+      "owner": {
+        "team": "Payments Engineering",
+        "lead": "bob@example.com",
+        "slack": "#payments-eng",
+        "on_call": "pagerduty:payments-oncall"
+      },
+      "regions": [
+        "us-east-1",
+        "eu-west-1"
+      ],
+      "sla": {
+        "availability_target": "99.9%"
+      },
+      "tags": [
+        "financial",
+        "third-party",
+        "pci-dss"
+      ],
+      "circuit_breaker": true,
+      "known_issues": [
+        "Stripe degraded performance triggered INC-4021 cascade on 2024-06-14"
+      ]
+    },
+    {
+      "id": "sendgrid",
+      "type": "external",
+      "display_name": "SendGrid (Email)",
+      "description": "Transactional email delivery for order confirmations, invoices, and password resets.",
+      "vendor": "Twilio SendGrid",
+      "owner": {
+        "team": "Commerce Platform",
+        "lead": "dave@example.com",
+        "slack": "#commerce-platform",
+        "on_call": "pagerduty:commerce-oncall"
+      },
+      "regions": [
+        "us-east-1",
+        "eu-west-1"
+      ],
+      "sla": {
+        "availability_target": "99.5%"
+      },
+      "tags": [
+        "email",
+        "third-party",
+        "non-critical-path"
+      ],
+      "circuit_breaker": false
+    },
+    {
+      "id": "apns-gcm",
+      "type": "external",
+      "display_name": "APNs / FCM (Push Notifications)",
+      "description": "Apple Push Notification Service and Firebase Cloud Messaging for mobile push.",
+      "vendor": "Apple / Google",
+      "owner": {
+        "team": "Commerce Platform",
+        "lead": "dave@example.com",
+        "slack": "#commerce-platform",
+        "on_call": "pagerduty:commerce-oncall"
+      },
+      "regions": [
+        "us-east-1"
+      ],
+      "sla": {
+        "availability_target": "99.0%"
+      },
+      "tags": [
+        "push",
+        "third-party",
+        "non-critical-path"
+      ],
+      "circuit_breaker": false
+    },
+    {
+      "id": "cloudflare",
+      "type": "external",
+      "display_name": "Cloudflare (CDN / WAF)",
+      "description": "Edge CDN, DDoS protection, and WAF sitting in front of the API gateway.",
+      "vendor": "Cloudflare",
+      "owner": {
+        "team": "Platform Engineering",
+        "lead": "carol@example.com",
+        "slack": "#platform-eng",
+        "on_call": "pagerduty:platform-oncall"
+      },
+      "regions": [
+        "global"
+      ],
+      "sla": {
+        "availability_target": "99.99%"
+      },
+      "tags": [
+        "edge",
+        "third-party",
+        "security"
+      ],
+      "circuit_breaker": false
+    },
+    {
+      "id": "pagerduty",
+      "type": "external",
+      "display_name": "PagerDuty (Alerting)",
+      "description": "On-call alerting and incident management platform.",
+      "vendor": "PagerDuty",
+      "owner": {
+        "team": "Platform Engineering",
+        "lead": "carol@example.com",
+        "slack": "#platform-eng",
+        "on_call": null
+      },
+      "regions": [
+        "global"
+      ],
+      "tags": [
+        "observability",
+        "third-party"
+      ],
+      "circuit_breaker": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "cloudflare",
+      "to": "gateway",
+      "type": "proxy",
+      "protocol": "HTTPS",
+      "description": "All public traffic passes through Cloudflare CDN/WAF before reaching the API gateway.",
+      "critical": true
+    },
+    {
+      "from": "gateway",
+      "to": "auth",
+      "type": "sync",
+      "protocol": "HTTP/2 + gRPC",
+      "description": "Routes /auth/* and validates bearer tokens on every inbound request via auth-service.",
+      "critical": true,
+      "circuit_breaker": true,
+      "timeout_ms": 5000
+    },
+    {
+      "from": "gateway",
+      "to": "orders",
+      "type": "sync",
+      "protocol": "HTTP/2",
+      "description": "Routes /api/v1/orders/* to orders-service after auth token validation.",
+      "critical": true,
+      "circuit_breaker": true,
+      "timeout_ms": 30000
+    },
+    {
+      "from": "gateway",
+      "to": "payments",
+      "type": "sync",
+      "protocol": "HTTP/2",
+      "description": "Routes /api/v1/payments/* and /webhooks/stripe to payments-service.",
+      "critical": true,
+      "circuit_breaker": true,
+      "timeout_ms": 30000,
+      "known_issues": [
+        "Circuit breaker opened permanently during INC-4021 (failure_threshold=1 misconfiguration)"
+      ]
+    },
+    {
+      "from": "gateway",
+      "to": "search",
+      "type": "sync",
+      "protocol": "HTTP/2",
+      "description": "Routes /api/v1/search/* to search-service.",
+      "critical": false,
+      "circuit_breaker": true,
+      "timeout_ms": 5000
+    },
+    {
+      "from": "auth",
+      "to": "redis",
+      "type": "sync",
+      "protocol": "RESP (Redis protocol)",
+      "description": "Reads and writes session tokens, rate-limit counters, account lockout state. Auth cannot function without Redis.",
+      "critical": true,
+      "timeout_ms": 500,
+      "fallback": "Falls back to DB if Redis unavailable, but at significantly higher latency."
+    },
+    {
+      "from": "auth",
+      "to": "user-db",
+      "type": "sync",
+      "protocol": "PostgreSQL wire protocol",
+      "description": "Reads user credentials and profile. Writes new accounts, password changes, audit log entries.",
+      "critical": true,
+      "timeout_ms": 3000
+    },
+    {
+      "from": "orders",
+      "to": "auth",
+      "type": "sync",
+      "protocol": "HTTP/2 + gRPC",
+      "description": "Validates caller identity on every order mutation. Auth token introspection.",
+      "critical": true,
+      "circuit_breaker": true,
+      "timeout_ms": 3000
+    },
+    {
+      "from": "orders",
+      "to": "payments",
+      "type": "sync",
+      "protocol": "HTTP/2",
+      "description": "Initiates payment charge at checkout. Checks payment status before fulfilling order.",
+      "critical": true,
+      "circuit_breaker": true,
+      "timeout_ms": 30000,
+      "known_issues": [
+        "payments-service unavailability during INC-4021 caused orders to queue and status to stall"
+      ]
+    },
+    {
+      "from": "orders",
+      "to": "inventory",
+      "type": "sync",
+      "protocol": "HTTP/2",
+      "description": "Reserves inventory units on order creation. Releases on cancellation or return.",
+      "critical": true,
+      "circuit_breaker": true,
+      "timeout_ms": 5000
+    },
+    {
+      "from": "orders",
+      "to": "orders-db",
+      "type": "sync",
+      "protocol": "PostgreSQL wire protocol",
+      "description": "Persists order records, status history, and event log.",
+      "critical": true,
+      "timeout_ms": 5000,
+      "known_issues": [
+        "Disk quota exhausted during INC-4021 \u2014 WAL archive grew unchecked for 47 days"
+      ]
+    },
+    {
+      "from": "orders",
+      "to": "kafka",
+      "type": "async",
+      "protocol": "Kafka producer (TCP)",
+      "description": "Publishes orders.created, orders.updated, orders.cancelled events for downstream consumers.",
+      "critical": true,
+      "topics": [
+        "orders.created",
+        "orders.updated",
+        "orders.cancelled"
+      ]
+    },
+    {
+      "from": "payments",
+      "to": "stripe",
+      "type": "sync",
+      "protocol": "HTTPS (REST)",
+      "description": "Card charge, refund, and payment intent creation. Inbound webhooks from Stripe for async event confirmation.",
+      "critical": true,
+      "circuit_breaker": true,
+      "timeout_ms": 30000,
+      "known_issues": [
+        "Stripe 503 during INC-4021 triggered circuit breaker (misconfigured threshold=1)",
+        "Amex endpoint hardcoded to Visa/MC path in v3.17.0 \u2014 fixed in v3.18.0"
+      ]
+    },
+    {
+      "from": "payments",
+      "to": "bank-api",
+      "type": "sync",
+      "protocol": "HTTPS (REST)",
+      "description": "ACH/SEPA merchant payout settlement. Batched nightly. Non-real-time.",
+      "critical": false,
+      "circuit_breaker": true,
+      "timeout_ms": 60000,
+      "regions": [
+        "eu-west-1"
+      ]
+    },
+    {
+      "from": "payments",
+      "to": "payments-db",
+      "type": "sync",
+      "protocol": "PostgreSQL wire protocol",
+      "description": "Persists transaction records, refunds, audit log. PCI-DSS scope.",
+      "critical": true,
+      "timeout_ms": 5000,
+      "known_issues": [
+        "Production pods pointed to staging DB host during INC-4021 after k8s secret recreation"
+      ]
+    },
+    {
+      "from": "payments",
+      "to": "kafka",
+      "type": "async",
+      "protocol": "Kafka producer (TCP)",
+      "description": "Publishes payments.completed and payments.failed events.",
+      "critical": false,
+      "topics": [
+        "payments.completed",
+        "payments.failed"
+      ]
+    },
+    {
+      "from": "inventory",
+      "to": "inventory-db",
+      "type": "sync",
+      "protocol": "PostgreSQL wire protocol",
+      "description": "Stock levels, product catalogue, reservation ledger.",
+      "critical": true,
+      "timeout_ms": 3000
+    },
+    {
+      "from": "inventory",
+      "to": "redis",
+      "type": "sync",
+      "protocol": "RESP",
+      "description": "Caches product availability counts for low-latency reads. Invalidated on stock update.",
+      "critical": false,
+      "timeout_ms": 200,
+      "fallback": "Falls back to inventory-db read on cache miss."
+    },
+    {
+      "from": "search",
+      "to": "elasticsearch",
+      "type": "sync",
+      "protocol": "HTTPS (Elasticsearch REST API)",
+      "description": "All product search queries. Index rebuild triggered from inventory-db nightly.",
+      "critical": true,
+      "timeout_ms": 5000
+    },
+    {
+      "from": "notifications",
+      "to": "kafka",
+      "type": "async",
+      "protocol": "Kafka consumer (TCP)",
+      "description": "Consumes orders.created, orders.updated, and payments.completed events to trigger emails and push notifications.",
+      "critical": false,
+      "topics": [
+        "orders.created",
+        "orders.updated",
+        "payments.completed"
+      ],
+      "consumer_group": "notifications-service-cg"
+    },
+    {
+      "from": "notifications",
+      "to": "sendgrid",
+      "type": "sync",
+      "protocol": "HTTPS (REST)",
+      "description": "Sends transactional emails \u2014 order confirmations, invoices, password resets.",
+      "critical": false,
+      "circuit_breaker": false,
+      "timeout_ms": 10000
+    },
+    {
+      "from": "notifications",
+      "to": "apns-gcm",
+      "type": "sync",
+      "protocol": "HTTPS (APNs HTTP/2, FCM REST)",
+      "description": "Sends mobile push notifications for order status updates.",
+      "critical": false,
+      "circuit_breaker": false,
+      "timeout_ms": 10000
+    },
+    {
+      "from": "orders",
+      "to": "s3",
+      "type": "async",
+      "protocol": "HTTPS (AWS SDK)",
+      "description": "Writes CSV export files for admin bulk download. Also stores order attachment PDFs.",
+      "critical": false,
+      "timeout_ms": 30000
+    },
+    {
+      "from": "payments",
+      "to": "s3",
+      "type": "async",
+      "protocol": "HTTPS (AWS SDK)",
+      "description": "Stores invoice PDFs and PCI-scoped audit log archives.",
+      "critical": false,
+      "timeout_ms": 30000
+    },
+    {
+      "from": "search",
+      "to": "s3",
+      "type": "async",
+      "protocol": "HTTPS (AWS SDK)",
+      "description": "Reads ML ranking model artefacts from S3 on service startup.",
+      "critical": false,
+      "timeout_ms": 15000
+    },
+    {
+      "from": "gateway",
+      "to": "pagerduty",
+      "type": "async",
+      "protocol": "HTTPS (REST)",
+      "description": "Fires PagerDuty alerts on error-rate threshold breach or health check failure.",
+      "critical": false
+    }
+  ]
+}

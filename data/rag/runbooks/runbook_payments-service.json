@@ -1,0 +1,325 @@
+{
+  "runbook_id": "RB-PAY-001",
+  "service": "payments",
+  "version": "3.x",
+  "last_updated": "2024-06-15",
+  "last_updated_by": "bob@example.com",
+  "owner": {
+    "team": "Payments Engineering",
+    "slack": "#payments-eng",
+    "on_call": "pagerduty:payments-oncall"
+  },
+  "dependencies": {
+    "hard": [
+      "payments-db",
+      "stripe"
+    ],
+    "soft": [
+      "kafka",
+      "bank-api",
+      "s3"
+    ],
+    "notes": "payments-service cannot process transactions without Stripe and payments-db. Kafka failure degrades event publishing but does not block payments. bank-api is only used for nightly settlement \u2014 daytime failures are not immediately customer-facing. IMPORTANT: This service is PCI-DSS scoped. Any shell access to payments pods must be logged and is subject to audit."
+  },
+  "common_issues": [
+    {
+      "issue_id": "PAY-001",
+      "title": "Payments timing out / checkout hanging",
+      "symptoms": [
+        "POST /api/v1/payments returns 504 or hangs indefinitely",
+        "Stripe dashboard shows no incoming requests (suggests we're not reaching Stripe)",
+        "Circuit breaker metric in Datadog showing OPEN state",
+        "Customer reports card charged but no order confirmation"
+      ],
+      "likely_causes": [
+        "Stripe API is degraded \u2014 check status.stripe.com first before doing anything else",
+        "Circuit breaker opened due to repeated failures and is now rejecting all requests",
+        "payments-service pods in CrashLoopBackOff due to DB or secret issue",
+        "Payments-db unreachable or pool exhausted"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Check Stripe status page immediately",
+          "command": "curl -s https://www.stripestatus.com/api/v2/status.json | jq .status.description",
+          "note": "If Stripe is degraded, this is likely their fault. Monitor their incident. Our circuit breaker will auto-reset when Stripe recovers. Do not restart pods for a Stripe outage."
+        },
+        {
+          "order": 2,
+          "action": "Check circuit breaker state",
+          "command": "kubectl exec deploy/payments-service -- curl -s localhost:8080/internal/circuit-breaker/status | jq .",
+          "note": "State should be CLOSED (healthy). OPEN means it's blocking all requests. HALF_OPEN means it's testing recovery. If OPEN, check why it opened \u2014 look at recent error logs."
+        },
+        {
+          "order": 3,
+          "action": "Check pod status",
+          "command": "kubectl get pods -l app=payments-service",
+          "note": "Any CrashLoopBackOff pods are a problem. If you see this, do NOT restart \u2014 first check what the crash reason is."
+        },
+        {
+          "order": 4,
+          "action": "Check pod crash logs",
+          "command": "kubectl logs -l app=payments-service --previous | tail -50",
+          "note": "Look for DB connection errors, secret errors, or SSL errors. 'cannot connect to postgres' after a deploy usually means DB credentials are wrong in the k8s secret."
+        },
+        {
+          "order": 5,
+          "action": "Verify DB credentials secret is correct",
+          "command": "kubectl get secret payments-db-credentials -o json | jq '.data | map_values(@base64d)'",
+          "note": "Check that the host points to PRODUCTION postgres, not staging. This has happened before (INC-4021). sslmode must be 'require'."
+        },
+        {
+          "order": 6,
+          "action": "If Stripe is fine and pods are healthy, manually reset circuit breaker",
+          "command": "kubectl exec deploy/payments-service -- curl -s -X POST localhost:8080/internal/circuit-breaker/reset",
+          "note": "Only do this if you have confirmed the upstream (Stripe) is healthy. Resetting while Stripe is still degraded will just cause it to open again immediately."
+        }
+      ],
+      "escalation": "Any payment processing outage lasting more than 5 minutes is a P1. Page payments on-call and notify #payments-eng. If customers were charged but orders not created, that is also a P1 \u2014 involve customer support lead."
+    },
+    {
+      "issue_id": "PAY-002",
+      "title": "Duplicate charges or double processing",
+      "symptoms": [
+        "Customer reports being charged twice",
+        "payments-db shows two transaction records for same order",
+        "Stripe dashboard shows duplicate payment intents for same customer"
+      ],
+      "likely_causes": [
+        "Idempotency key not being set on Stripe API calls (or being generated incorrectly)",
+        "Webhook retry from Stripe being processed multiple times",
+        "Frontend retrying payment after timeout without idempotency token"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Confirm duplication in payments-db",
+          "command": "kubectl exec deploy/payments-service -- psql $DATABASE_URL -c \"SELECT order_id, count(*) FROM transactions GROUP BY order_id HAVING count(*) > 1 LIMIT 10;\"",
+          "note": "Identify affected order_ids. Get exact timestamps of both charges to understand the sequence."
+        },
+        {
+          "order": 2,
+          "action": "Check Stripe dashboard for duplicate payment intents",
+          "command": "Log into Stripe dashboard, search by customer email or order ID. Look for multiple PaymentIntents with identical metadata.",
+          "note": "If both charges succeeded, you need to refund one immediately. Do not wait."
+        },
+        {
+          "order": 3,
+          "action": "Issue manual refund for duplicate charge via Stripe dashboard",
+          "command": "Stripe dashboard > Payments > find duplicate charge > Refund",
+          "note": "Document the refund amount and reason in the incident ticket. Notify customer support to reach out to affected customer."
+        },
+        {
+          "order": 4,
+          "action": "Check if idempotency key logic is functioning",
+          "command": "kubectl logs deploy/payments-service | grep 'idempotency_key' | tail -20",
+          "note": "Idempotency key should be set on every Stripe call. If absent from logs, this is a code bug. Pull the relevant PR and check."
+        },
+        {
+          "order": 5,
+          "action": "Check Stripe webhook retry config",
+          "command": "Log into Stripe dashboard > Developers > Webhooks > check retry attempts for recent events",
+          "note": "If Stripe retried a webhook 3 times and we processed each one, our idempotency check on webhooks isn't working. Check payments-service code for webhook deduplication logic."
+        }
+      ],
+      "escalation": "Any confirmed double-charge is a financial incident. Notify bob@example.com and the CFO's team. Do not communicate specifics to customers until legal/finance has reviewed."
+    },
+    {
+      "issue_id": "PAY-003",
+      "title": "Specific card type failing (e.g., Amex)",
+      "symptoms": [
+        "Subset of users with specific card type getting payment errors",
+        "Stripe logs show requests going to wrong endpoint",
+        "Error code: 1005 or 'card_not_supported'"
+      ],
+      "likely_causes": [
+        "Card-type routing hardcoded to wrong Stripe endpoint (this happened in v3.17.0 \u2014 Amex requires /v1/payment_intents, Visa/MC uses /v1/charges)",
+        "Stripe account not enabled for specific card type",
+        "Currency / country restriction on card type"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Identify which card types are failing",
+          "command": "kubectl logs deploy/payments-service | grep -i 'error\\|fail' | grep -i 'card\\|amex\\|visa' | tail -30",
+          "note": "Stripe error messages usually contain card brand info. Identify the pattern."
+        },
+        {
+          "order": 2,
+          "action": "Check which Stripe endpoint is being called for failing card type",
+          "command": "kubectl logs deploy/payments-service | grep 'stripe request' | grep -i '<card_type>'",
+          "note": "Amex MUST go to /v1/payment_intents. Visa/MC can use /v1/charges. If Amex is going to /v1/charges, that's your bug. This is a code issue not a config issue."
+        },
+        {
+          "order": 3,
+          "action": "Check current deployed version",
+          "command": "kubectl get deploy/payments-service -o json | jq '.spec.template.spec.containers[0].image'",
+          "note": "If on v3.17.0, this is a known bug. Roll back to v3.15.2 or forward to v3.18.0+."
+        },
+        {
+          "order": 4,
+          "action": "Rollback if on known bad version",
+          "command": "kubectl rollout undo deployment/payments-service",
+          "note": "Verify with kubectl rollout status deployment/payments-service. Check payments work after rollback before closing incident."
+        },
+        {
+          "order": 5,
+          "action": "Identify affected customers and refund/reprocess",
+          "command": "Query payments-db for failed transactions in the affected window. Cross-reference with Stripe for error codes.",
+          "note": "Customers whose Amex was declined may have tried other cards. Check for duplicate successful charges too."
+        }
+      ],
+      "escalation": "Card-type failures are P2 unless the failure is total (all cards failing). Notify #payments-eng. If financial data integrity is at risk, escalate to P1."
+    },
+    {
+      "issue_id": "PAY-004",
+      "title": "Refunds being processed incorrectly (wrong amount or duplicated)",
+      "symptoms": [
+        "Customer received refund of incorrect amount",
+        "Refund amount 100x expected (unit conversion bug)",
+        "Multiple refunds for same transaction"
+      ],
+      "likely_causes": [
+        "Dollar-to-cents conversion applied twice (amounts stored in cents internally, refund API may accept dollars \u2014 check API contract)",
+        "Stripe webhook retries causing refund handler to run multiple times",
+        "Missing idempotency check on refund endpoint"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Stop the bleeding \u2014 disable refund endpoint if actively misfiring",
+          "command": "kubectl set env deployment/payments-service REFUND_ENDPOINT_ENABLED=false",
+          "note": "Only do this if refunds are actively processing incorrectly and you can't fix immediately. Communicate to support team that refunds are temporarily paused."
+        },
+        {
+          "order": 2,
+          "action": "Check refund amounts in payments-db vs Stripe",
+          "command": "kubectl exec deploy/payments-service -- psql $DATABASE_URL -c \"SELECT id, order_id, amount_cents, refund_amount_cents, created_at FROM refunds ORDER BY created_at DESC LIMIT 20;\"",
+          "note": "Compare refund_amount_cents against what's in Stripe dashboard. A 100x discrepancy suggests unit conversion bug."
+        },
+        {
+          "order": 3,
+          "action": "Check currency conversion code path",
+          "command": "Look at the refund handler in payments-service source. Check if amount is converted to cents before being passed to Stripe \u2014 Stripe expects amounts in the smallest currency unit (cents for USD).",
+          "note": "This isn't something you can check at runtime. Pull the code. If you see the value being divided by 100 AND multiplied by 100, that's the bug."
+        },
+        {
+          "order": 4,
+          "action": "Recover overpaid refunds via Stripe",
+          "command": "For overpaid refunds, contact Stripe support. They can sometimes claw back excess amounts if reported quickly.",
+          "note": "Realistically, if the money has been returned to the customer's card, recovery is very difficult. Finance and legal need to decide how to handle this."
+        }
+      ],
+      "escalation": "Any financial integrity issue is escalated to bob@example.com and finance team immediately. Do not attempt to fix refund errors without a second engineer reviewing."
+    },
+    {
+      "issue_id": "PAY-005",
+      "title": "payments-db write failures / connection pool exhausted",
+      "symptoms": [
+        "Logs show 'connection pool exhausted' or 'too many connections'",
+        "Transactions failing at persist step despite Stripe succeeding",
+        "pg_stat_activity showing max connections reached"
+      ],
+      "likely_causes": [
+        "Connection pool size too large relative to Postgres max_connections",
+        "Connections not being returned to pool after use (leak)",
+        "Too many payments-service pods each holding large connection pools",
+        "Long-running transactions holding connections"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Check active connections to payments-db",
+          "command": "kubectl exec deploy/payments-service -- psql $DATABASE_URL -c \"SELECT count(*) FROM pg_stat_activity WHERE datname = 'payments';\"",
+          "note": "Postgres max_connections is currently 200. We should not be above 150 under normal load. If above 180, something is leaking."
+        },
+        {
+          "order": 2,
+          "action": "Identify long-running or idle connections",
+          "command": "kubectl exec deploy/payments-service -- psql $DATABASE_URL -c \"SELECT pid, state, query_start, query FROM pg_stat_activity WHERE datname='payments' ORDER BY query_start ASC LIMIT 20;\"",
+          "note": "Idle connections older than 10 minutes are suspicious. idle in transaction is particularly bad \u2014 means a transaction was opened and not committed or rolled back."
+        },
+        {
+          "order": 3,
+          "action": "If connections are stuck, terminate the worst offenders",
+          "command": "kubectl exec deploy/payments-service -- psql $DATABASE_URL -c \"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE state = 'idle in transaction' AND query_start < NOW() - INTERVAL '5 minutes';\"",
+          "note": "Do this carefully. Terminating active transactions will cause in-flight payments to fail and possibly need reprocessing. Get a second opinion first."
+        },
+        {
+          "order": 4,
+          "action": "Check DB_POOL_SIZE and DB_POOL_MAX_OVERFLOW settings",
+          "command": "kubectl get deploy/payments-service -o json | jq '.spec.template.spec.containers[0].env[] | select(.name | startswith(\"DB_\"))'",
+          "note": "Pool size \u00d7 pod count should be less than 70% of Postgres max_connections. If you have 5 pods each with pool size 50, that's 250 connections \u2014 above the limit."
+        },
+        {
+          "order": 5,
+          "action": "Short-term fix: scale down payments-service pods to reduce connection count",
+          "command": "kubectl scale deployment/payments-service --replicas=2",
+          "note": "This reduces capacity but reduces connections proportionally. Only do this during off-peak hours. Remember to scale back up."
+        }
+      ],
+      "escalation": "DB connection exhaustion on payments is P1 \u2014 write failures mean lost transactions. Page payments on-call and optionally DBA team."
+    },
+    {
+      "issue_id": "PAY-006",
+      "title": "Nightly bank settlement failing (bank-api errors)",
+      "symptoms": [
+        "Morning alert: 'settlement job failed' in PagerDuty",
+        "bank-api returning 4xx or 5xx in nightly job logs",
+        "Merchants not receiving expected payouts"
+      ],
+      "likely_causes": [
+        "bank-api credentials expired or rotated without updating k8s secret",
+        "Settlement file format rejected (ClearBank occasionally updates their schema without warning)",
+        "Network connectivity issue between eu-west-1 and ClearBank endpoints",
+        "Payments being processed outside allowed settlement window"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Check the settlement job logs",
+          "command": "kubectl logs job/nightly-settlement --since=12h | tail -100",
+          "note": "Look for the specific error from bank-api. 401 = credentials issue. 400 = format issue. 503 = their problem."
+        },
+        {
+          "order": 2,
+          "action": "Verify bank-api credentials",
+          "command": "kubectl get secret bank-api-credentials -o json | jq '.data.api_key | @base64d' | head -c 20",
+          "note": "Only print the first 20 chars for verification. Compare with what's in the password vault. ClearBank credentials rotate every 90 days \u2014 check if rotation is overdue."
+        },
+        {
+          "order": 3,
+          "action": "Check ClearBank status / contact their support",
+          "command": "Check their status page or email your ClearBank TAM. Their support email is in the vendor contacts doc (link in Confluence \u2014 ask Bob if you can't find it).",
+          "note": "ClearBank doesn't have a public status page. Their SLA response time is 4 hours during business hours (UK time)."
+        },
+        {
+          "order": 4,
+          "action": "Manually retry settlement job if safe to do so",
+          "command": "kubectl create job --from=cronjob/nightly-settlement manual-settlement-$(date +%Y%m%d)",
+          "note": "Only retry if you've confirmed the job is idempotent for today's run. Check if any partial settlement was sent \u2014 double-settling could cause overpayment to merchants."
+        }
+      ],
+      "escalation": "Failed settlement affects merchant payouts. If settlement has not completed by 09:00 UK time, escalate to Bob and notify merchant success team."
+    }
+  ],
+  "general_health_checks": [
+    "kubectl get pods -l app=payments-service \u2014 all pods Running, no restarts in last hour",
+    "curl -s https://payments.internal/health | jq .status \u2014 expect 'ok'",
+    "Check Datadog: 'Payments Overview' dashboard \u2014 payment success rate should be >99.5%",
+    "Check Stripe dashboard for any unusual error rate spikes",
+    "Check payments-db connection count: should be < 150 under normal load",
+    "Verify circuit breaker state: curl -s payments.internal/internal/circuit-breaker/status"
+  ],
+  "known_gaps": [
+    "No automated test for Amex card routing in CI \u2014 added manually after INC-4021 but coverage is incomplete",
+    "Refund endpoint has no admin UI \u2014 all refunds via psql or Stripe dashboard",
+    "bank-api credential rotation procedure is manual and not well documented \u2014 ask Bob",
+    "Settlement job retry logic is not idempotent in all edge cases \u2014 verify before manual retry",
+    "PCI audit log archival to S3 not verified end-to-end since last audit"
+  ],
+  "notes": "This service is PCI-DSS scoped. All access is logged. Do not print full card numbers or full API keys to logs or Slack under any circumstances. If you suspect a security breach involving payment data, follow the security incident response plan (separate doc \u2014 find it, seriously, find it before you need it).",
+  "incident_examples": [
+    "INC-4021"
+  ]
+}

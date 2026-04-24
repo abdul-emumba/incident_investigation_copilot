@@ -1,0 +1,85 @@
+{
+  "metadata": {
+    "name": "Service Dependency Knowledge Graph",
+    "generated_at": "2026-04-17T06:27:26Z",
+    "description": "Directed service dependency graph. Edges represent depends_on relationships."
+  },
+  "nodes": [
+    {
+      "id": "auth",
+      "type": "service",
+      "owner": "team-auth",
+      "region": "us-east-1",
+      "known_incidents": [
+        "INC-4019: JWT secret rotation mismatch on 2024-06-14"
+      ]
+    },
+    {
+      "id": "orders",
+      "type": "service",
+      "owner": "team-orders",
+      "region": "us-east-1",
+      "known_incidents": [
+        "INC-4021: Disk quota exhausted on orders-db on 2024-06-14"
+      ]
+    },
+    {
+      "id": "payments",
+      "type": "service",
+      "owner": "team-payments",
+      "region": "eu-west-1",
+      "known_incidents": [
+        "INC-4021: Stripe 503 triggered circuit breaker on 2024-06-14"
+      ]
+    },
+    {
+      "id": "redis",
+      "type": "datastore",
+      "owner": "team-platform",
+      "region": "us-east-1",
+      "known_incidents": [
+        "INC-3908: OOM due to noeviction policy",
+        "INC-3991: Counter reset after failover"
+      ]
+    },
+    {
+      "id": "user-db",
+      "type": "datastore",
+      "owner": "team-auth",
+      "region": "us-east-1"
+    },
+    {
+      "id": "bank-api",
+      "type": "external",
+      "owner": "team-payments",
+      "region": "eu-west-1"
+    }
+  ],
+  "edges": [
+    {
+      "source": "auth",
+      "target": "redis",
+      "relationship": "depends_on"
+    },
+    {
+      "source": "auth",
+      "target": "user-db",
+      "relationship": "depends_on"
+    },
+    {
+      "source": "orders",
+      "target": "auth",
+      "relationship": "depends_on"
+    },
+    {
+      "source": "orders",
+      "target": "payments",
+      "relationship": "depends_on"
+    },
+    {
+      "source": "payments",
+      "target": "bank-api",
+      "relationship": "depends_on"
+    }
+  ]
+}

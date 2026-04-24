@@ -1,0 +1,43 @@
+[
+  {
+    "id": "2866dcf5",
+    "incident_id": "INC-DD2B6C",
+    "query": "Why did auth-service fail on 2024-01-15 around 14:00?",
+    "root_cause": "auth-service version 2.14.3, clock skew issues between auth-service and clients caused TOTP validation and token expiry problems, leading to errors in auth-service and subsequent services",
+    "affected_services": [
+      "auth-service",
+      "gateway",
+      "orders-service",
+      "cloudflare"
+    ],
+    "confidence": 0.85,
+    "investigation_summary": "The auth-service experienced a failure on 2024-01-15 around 14:00 due to clock skew issues between auth-service and clients, causing TOTP validation and token expiry problems. This led to a cascade of errors in subsequent services, including gateway and orders-service. The deployment of version 2.14.3 as a hotfix to patch JWT key rotation may have contributed to the issue.",
+    "recommended_actions": [
+      "Immediate: Verify and adjust auth-service clock to prevent clock skew issues",
+      "Short-term: Implement clock skew monitoring and alerting for auth-service",
+      "Long-term: Review and refine the deployment process for auth-service to prevent similar issues in the future"
+    ],
+    "timestamp": "2026-04-24T06:23:53.385735+00:00"
+  },
+  {
+    "id": "cc4327c4",
+    "incident_id": "INC-4021",
+    "query": "Which logs had ERROR level during INC-4021?",
+    "root_cause": "The secret rotation mechanism in auth-service v2.14.0 caused a cascading failure due to an incorrect JWKS endpoint configuration, leading to a TokenValidationError spike and subsequent errors in dependent services.",
+    "affected_services": [
+      "all_services",
+      "orders-service",
+      "gateway",
+      "auth-service",
+      "cloudflare"
+    ],
+    "confidence": 0.0,
+    "investigation_summary": "A secret rotation occurred at 09:15 for the auth service, which is suspected to have caused a cascading failure that led to errors in the orders and gateway services, resulting in a DiskQuotaExceededError and an UpstreamServiceError. The errors propagated through the critical path of all_services \u2192 orders-service \u2192 gateway \u2192 auth-service.",
+    "recommended_actions": [
+      "Immediate: Verify the correctness of the JWKS endpoint configuration in auth-service",
+      "Short-term: Implement automated testing for secret rotation and JWKS endpoint configuration in auth-service",
+      "Long-term: Review and refine the critical path of all_services \u2192 orders-service \u2192 gateway \u2192 auth-service to reduce the likelihood of cascading failures"
+    ],
+    "timestamp": "2026-04-24T06:37:36.553191+00:00"
+  }
+]

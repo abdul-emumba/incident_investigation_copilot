@@ -1,0 +1,1004 @@
+[
+  {
+    "ticket_id": "TKT-62950",
+    "title": "Payments service timing out",
+    "description": "Users are reporting that checkout is hanging indefinitely. The payments page just spins and never completes. We think the database might be overloaded because CPU is at 80% on the payments pod. No errors visible in the UI.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T12:00:00Z",
+    "related_cluster": "payments_stripe_down",
+    "initial_hypothesis": "Engineering suspects a recent deploy is the cause.",
+    "reported_by": "security-team",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-80599",
+    "title": "Checkout flow broken \u2013 payments not going through",
+    "description": "Multiple customers emailed saying their cards are being charged but orders aren't placed. Suspect a race condition in the order creation logic introduced in last week's deploy. Engineering is investigating the new checkout refactor.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T12:05:00Z",
+    "related_cluster": "payments_stripe_down",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-59018",
+    "title": "[P1] Stripe API returning 503 \u2013 payment processing down",
+    "description": "Confirmed: Stripe status page shows degraded performance on their payments API since 11:58 UTC. Our circuit breaker has opened. All payment requests are being queued. ETA from Stripe is 30\u201345 minutes. No action needed on our infra side.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T12:20:00Z",
+    "resolution": "Stripe resolved their incident at 12:51 UTC. Circuit breaker reset automatically. Payment queue drained within 4 minutes. No data loss. Post-mortem scheduled.",
+    "related_cluster": "payments_stripe_down",
+    "severity": "P3",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-20874",
+    "title": "Payment gateway down \u2013 customers can't complete purchases",
+    "description": "High volume of failed transactions since roughly midday. Our on-call engineer initially suspected the Redis session cache because there was a cache miss spike around the same time, but that may be a red herring. Still investigating root cause.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T12:15:00Z",
+    "resolution": "Root cause was Stripe-side. Redis cache miss spike was unrelated \u2014 caused by a separate routine cache eviction job that ran at noon.",
+    "initial_hypothesis": "Suspected DNS misconfiguration.",
+    "reported_by": "automated-alert",
+    "severity": "P3",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-80033",
+    "title": "Users being logged out randomly",
+    "description": "Support queue blowing up with users saying they're being kicked out mid-session. Happens across browsers and devices. Someone on the team thinks the load balancer is dropping sticky sessions, but we haven't confirmed this yet.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-14T09:00:00Z",
+    "related_cluster": "auth_jwt",
+    "initial_hypothesis": "Engineering suspects a recent deploy is the cause.",
+    "reported_by": "customer-support",
+    "incident_id": "INC-4019"
+  },
+  {
+    "ticket_id": "TKT-31077",
+    "title": "JWT token validation failing intermittently",
+    "description": "Auth service logs show 'signature mismatch' errors on roughly 12% of token validations. This started after the secret rotation at 09:15 UTC. Old tokens signed with the previous secret are being rejected because we forgot to keep the old key in the validation chain during the rotation window.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-14T09:15:00Z",
+    "resolution": "Added previous signing key back to the JWKS endpoint. Deployed hotfix v2.14.1. Affected users need to log in again \u2014 ~3,400 sessions invalidated. Added key rotation runbook to prevent recurrence.",
+    "reported_by": "automated-alert",
+    "incident_id": "INC-4019"
+  },
+  {
+    "ticket_id": "TKT-14857",
+    "title": "Login broken after maintenance window",
+    "description": "Since the 09:00 maintenance, a subset of users can't log in. Error message says 'Invalid credentials' even though passwords are correct. Initially thought it was a password hashing algorithm change, spent 2 hours on that. Actual cause still unknown.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-14T09:20:00Z",
+    "resolution": "Duplicate of TKT-auth_jwt. Root cause was secret rotation mismatch, not password hashing.",
+    "initial_hypothesis": "Suspected DNS misconfiguration.",
+    "severity": "P1",
+    "incident_id": "INC-4019"
+  },
+  {
+    "ticket_id": "TKT-59946",
+    "title": "Orders service throwing 500 errors",
+    "description": "Order creation endpoint returning HTTP 500 since 14:32. Initial theory is that the recent traffic spike caused the service to run out of memory \u2014 the pod was restarted twice in the last hour. Memory graphs look elevated.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T14:32:00Z",
+    "related_cluster": "orders_disk",
+    "reported_by": "customer-support",
+    "severity": "P1",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-26561",
+    "title": "[CRITICAL] Orders DB disk quota exceeded",
+    "description": "Postgres data volume on orders-db-primary hit 100% capacity at 14:31 UTC. Writes are failing, causing cascading 500s from the orders service. The WAL archive directory has not been pruned in 47 days due to a misconfigured cron job. Immediate action: extend volume or prune WAL.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T14:35:00Z",
+    "resolution": "Pruned WAL archive (freed 180GB). Extended EBS volume to 500GB. Restarted orders-db-primary. Orders service recovered at 15:02 UTC. Fixed cron job schedule. Added disk alerting at 75% and 90% thresholds.",
+    "reported_by": "ceo-escalation",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-29718",
+    "title": "Can't place orders \u2013 getting server error",
+    "description": "Customers reporting 'Something went wrong' on checkout. This is the second time this week orders have gone down. We think the culprit might be the new inventory-check microservice that was released Monday \u2014 it's making synchronous calls and could be blocking the thread pool.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T14:40:00Z",
+    "resolution": "Actual root cause was disk quota on orders-db. The inventory-check service was functioning normally.",
+    "related_cluster": "orders_disk",
+    "initial_hypothesis": "Infra team believes this is a resource exhaustion issue.",
+    "severity": "P3",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-75422",
+    "title": "API gateway returning 502 for all requests",
+    "description": "100% of API calls returning 502 Bad Gateway starting 14:03. Nginx error logs show upstream connection refused. The DevOps team is checking if a bad deployment rolled out to the gateway \u2014 last deploy was 3 hours ago though.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T14:03:00Z",
+    "related_cluster": "gateway_cb",
+    "reported_by": "on-call-engineer",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-11461",
+    "title": "Circuit breaker open on gateway \u2013 payments upstream down",
+    "description": "Gateway circuit breaker tripped open for the payments-service upstream at 14:01 UTC after consecutive 503 responses. This is expected behavior. Gateway is correctly returning 503 with Retry-After header. No gateway config change needed \u2014 waiting on payments recovery.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T14:05:00Z",
+    "resolution": "Circuit breaker reset at 13:05 UTC once Stripe recovered and payments-service returned healthy responses. Gateway fully operational.",
+    "related_cluster": "gateway_cb",
+    "reported_by": "ceo-escalation",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-60585",
+    "title": "All endpoints down \u2013 site appears to be offline",
+    "description": "Monitoring alert fired: external uptime check failing from 3 regions. Customers tweeting about the site being down. The CEO has been notified. Our DNS might have been misconfigured \u2014 someone changed Route53 settings this morning. Checking with the infra team.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T14:10:00Z",
+    "resolution": "DNS was fine. Outage caused by gateway circuit breaker opening due to upstream payments failure. Route53 changes were unrelated (added a new subdomain). Communications team sent status page update.",
+    "related_cluster": "gateway_cb",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-62242",
+    "title": "Order events not being processed",
+    "description": "The order-fulfillment consumer has a growing lag on the orders.created topic \u2014 currently 84,000 unprocessed messages. Started accumulating around 14:35. Consumer pods appear healthy but throughput dropped to near zero. Possibly a poison-pill message blocking the partition.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T14:40:00Z",
+    "resolution": "Identified a malformed order event (missing required 'items' field) causing deserialization exception in the consumer. Added dead-letter queue routing for unparseable messages. Consumer lag cleared within 18 minutes after fix.",
+    "reported_by": "product-team",
+    "severity": "P3",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-38652",
+    "title": "Fulfillment emails not sending",
+    "description": "Customers aren't receiving order confirmation emails after purchase. This started around 2:30pm. The email service itself is healthy according to its own dashboard. We think SendGrid might be throttling us \u2014 we did send a large batch campaign this morning.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T14:55:00Z",
+    "resolution": "Root cause was Kafka consumer lag, not SendGrid. Emails were queued but not consumed. All queued emails delivered once consumer recovered.",
+    "initial_hypothesis": "Suspected DNS misconfiguration.",
+    "priority": "SEV-1",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "P1-801",
+    "title": "Redis OOM \u2013 cache cluster out of memory",
+    "description": "Redis maxmemory limit hit on the session cache cluster. Eviction policy set to noeviction, so new writes are failing with OOM errors. Auth service is logging thousands of cache write failures per minute. Session data is falling through to the database, causing query load spike.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-14T11:00:00Z",
+    "resolution": "Changed eviction policy to allkeys-lru temporarily. Increased Redis maxmemory from 4GB to 8GB. Scheduled capacity planning review.",
+    "priority": "SEV-1",
+    "incident_id": "INC-3908"
+  },
+  {
+    "ticket_id": "TKT-96273",
+    "title": "High latency on product search \u2013 users complaining",
+    "description": "P95 latency on /api/v1/search jumped from 120ms to 4200ms at around 10:45. Elasticsearch cluster shows elevated CPU. We rolled back the search ranking model deployed at 10:30 but latency didn't improve, so that probably wasn't it.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T10:45:00Z",
+    "resolution": "Root cause: a new analytics pipeline started a full-index rebuild job at 10:40, saturating Elasticsearch I/O. Paused the rebuild, latency normalized. Rebuild rescheduled for off-peak hours.",
+    "initial_hypothesis": "Possible third-party provider issue.",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-67678",
+    "title": "Payment refunds being double-processed",
+    "description": "Refund endpoint lacks idempotency key validation. When Stripe's webhook retries (3x), our handler processes the refund each time. Discovered when a customer received 3x their refund amount. Estimated financial impact: ~$1,200 across 4 customers.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T13:00:00Z",
+    "resolution": "Added idempotency key check using Stripe's charge ID as the deduplication key. Deployed fix. Manual reversal initiated for 4 affected customers. Stripe credited back overage.",
+    "reported_by": "on-call-engineer",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-48718",
+    "title": "TLS cert expiring in 3 days \u2013 urgent renewal needed",
+    "description": "Automated cert renewal via Certbot failed silently last week. The wildcard cert for *.api.example.com expires 2024-06-17. If not renewed, all HTTPS traffic will fail. The failure was due to a DNS challenge timeout \u2014 we changed DNS providers and forgot to update Certbot config.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-13T20:00:00Z",
+    "resolution": "Manually renewed cert via new DNS provider API. Updated Certbot config. Set up monitoring alert for cert expiry < 14 days. Added cert renewal to monthly ops checklist.",
+    "severity": "P2",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-96136",
+    "title": "Users seeing other users' order history",
+    "description": "Critical privacy bug. Three reports of users seeing a different account's order list on the /orders/history endpoint. This is almost certainly a caching bug \u2014 the CDN or application cache may be keying responses without user context. Immediate investigation required.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T16:20:00Z",
+    "resolution": "Confirmed CDN cache misconfiguration: Vary header was missing, causing authenticated responses to be served from shared cache. Purged CDN cache, added Vary: Authorization, Cache-Control: private headers. Affected users notified. Security review underway.",
+    "priority": "SEV-1",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-10474",
+    "title": "Auth service memory leak \u2013 pod restarting every 6 hours",
+    "description": "auth-service pod hits memory limit and gets OOMKilled every ~6 hours. Heap dumps show accumulation of open HTTP client connections that aren't being released. Suspected the connection pool isn't being closed properly after JWT validation calls to the user-service.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-14T10:00:00Z",
+    "reported_by": "monitoring-bot",
+    "incident_id": "INC-4019"
+  },
+  {
+    "ticket_id": "TKT-31936",
+    "title": "Spike in 401s \u2013 customers locked out",
+    "description": "401 error rate went from 0.3% to 18% at 09:15. Support is overwhelmed. We believe this is a frontend bug \u2014 the React app might not be sending the Authorization header correctly after the UI deploy this morning. Frontend team is checking.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-14T09:15:00Z",
+    "resolution": "Duplicate investigation with auth_jwt cluster. Root cause was server-side JWT key rotation, not a frontend bug. Frontend deploy was coincidental.",
+    "reported_by": "ceo-escalation",
+    "incident_id": "INC-4019"
+  },
+  {
+    "ticket_id": "TKT-71344",
+    "title": "Payments pod CrashLoopBackOff",
+    "description": "payments-service pod in CrashLoopBackOff since 14:05. Logs show 'Fatal: cannot connect to postgres on startup' \u2014 but the DB host/port config hasn't changed. Someone may have accidentally deleted the kubernetes secret containing the DB credentials during the earlier infra work.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T14:05:00Z",
+    "resolution": "Confirmed: k8s secret 'payments-db-credentials' was deleted at 13:58 during routine secret rotation. Secret recreated from vault backup. Pod recovered at 14:11. Added RBAC restriction on secret deletion in production namespace.",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-89421",
+    "title": "Slow dashboard load times reported by enterprise customers",
+    "description": "Three enterprise accounts opened support tickets about slow dashboard loads (8\u201315 seconds). Normal load time is ~1.2 seconds. These accounts have large datasets. We suspect it might be a missing index on the orders table after last week's migration, or possibly just their network connection.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T18:00:00Z",
+    "resolution": "Found missing composite index on (customer_id, created_at) that was dropped during migration. Added index \u2014 query time dropped from 12s to 180ms. Network was not the issue.",
+    "initial_hypothesis": "Engineering suspects a recent deploy is the cause.",
+    "severity": "P1",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-64627",
+    "title": "Webhook delivery failures to merchant integrations",
+    "description": "Outbound webhooks for the orders.completed event failing with connection timeouts to 3 merchant endpoints. Our webhook worker is retrying with exponential backoff. Two of the merchants confirmed their servers are fine \u2014 we may have an egress network policy blocking outbound port 443 to external IPs.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T19:40:00Z",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-85354",
+    "title": "Incorrect tax calculation on European orders",
+    "description": "EU customers being charged wrong VAT rates since the VAT table update deployed on June 12th. Austria is being taxed at 19% (Germany rate) instead of 20%. Approximately 340 orders affected. This might be a data entry error in the tax config CSV, or possibly a country-code mapping bug.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T21:20:00Z",
+    "resolution": "Confirmed data entry error: Austria (AT) was mapped to DE in the tax config CSV. Corrected mapping, redeployed config. Issued credit notes for 340 affected orders.",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-62225",
+    "title": "Mobile app can't reach API \u2013 'Network Error' on login",
+    "description": "iOS app users on version 3.2.1 getting 'Network Error' on login since this morning. Android unaffected. Backend team checked and all endpoints are healthy. This is almost certainly a mobile-side bug \u2014 maybe App Transport Security blocking non-HTTPS, or a base URL misconfiguration in the release build.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T08:45:00Z",
+    "resolution": "App build 3.2.1 had incorrect API base URL pointing to staging environment (api-staging.example.com) instead of production. Fix released in 3.2.2 via hotfix. Users prompted to update.",
+    "reported_by": "customer-support",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-60989",
+    "title": "Order status stuck on 'Processing' for 2+ hours",
+    "description": "About 200 orders created between 14:30 and 15:00 are stuck in 'Processing' state. The fulfillment pipeline reads from the Kafka topic orders.created but consumer lag was high during the incident window. These orders may have been lost. Need to check if they need to be manually reprocessed.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T15:10:00Z",
+    "resolution": "Orders were not lost \u2014 they were queued in Kafka. After consumer lag cleared, all 200 orders were processed successfully. Status updated automatically. No manual intervention needed.",
+    "initial_hypothesis": "Frontend team flagged a possible UI-side bug.",
+    "reported_by": "security-team",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-60155",
+    "title": "Suspicious spike in password reset requests",
+    "description": "Password reset endpoint received 12,000 requests in a 10-minute window at 11:20 UTC, compared to a baseline of ~40/hour. Could be a credential stuffing attack or a bot trying to enumerate valid email addresses. Rate limiting on this endpoint is set to 100/min globally, which is clearly insufficient.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-14T11:20:00Z",
+    "resolution": "Confirmed bot activity from 3 IP ranges. Blocked IPs via WAF. Reduced rate limit to 5 requests/min per IP on the reset endpoint. Added CAPTCHA to reset flow. No evidence of successful account takeovers.",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-92031",
+    "title": "Grafana shows payments latency at 0 \u2013 metrics missing",
+    "description": "Payments latency dashboard has been showing flat zero for the past 2 hours. Either the payment service has magically zero latency, or \u2014 more likely \u2014 the Prometheus scrape job stopped working. Could also be a broken metric name after the recent instrumentation refactor.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T12:40:00Z",
+    "resolution": "Metric name changed from payment_request_duration_ms to payment_request_duration_seconds in the refactor but the Grafana query wasn't updated. Fixed dashboard query. Added metric name validation to CI pipeline.",
+    "reported_by": "on-call-engineer",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-70276",
+    "title": "500 error on /api/v1/orders/export for large datasets",
+    "description": "The CSV export feature crashes when exporting more than ~10,000 orders. Error in logs: 'Worker process exited with OOM'. The export endpoint loads all rows into memory before writing the CSV. This has probably always been broken for large accounts \u2014 we just didn't have any until now.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T18:50:00Z",
+    "severity": "P1",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-84660",
+    "title": "Payments service not starting after config change",
+    "description": "After updating the payments service environment variables to point to the new Postgres replica, the service refuses to start. Logs show 'SSL required' error. The new replica has SSL enforced but our connection string doesn't include sslmode=require. Thought the replica would have the same config as primary.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T17:10:00Z",
+    "resolution": "Added sslmode=require to connection string. Service started successfully. Noted that replica SSL config differs from primary \u2014 added this to the infra runbook.",
+    "initial_hypothesis": "Frontend team flagged a possible UI-side bug.",
+    "severity": "P1",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "#40140",
+    "title": "Gateway health check failing \u2013 marked unhealthy by load balancer",
+    "description": "ALB health check on /health endpoint returning 200 but with a 3.2 second response time, causing the ALB to mark instances as unhealthy and deregister them. The /health endpoint is doing a deep check including a DB query which is timing out under load. Shallow health check would have avoided this.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T16:00:00Z",
+    "resolution": "Changed /health to return immediately (shallow check). Added separate /health/deep endpoint for internal monitoring only. Instances re-registered within 2 minutes.",
+    "reported_by": "security-team",
+    "priority": "critical",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-34704",
+    "title": "New user signup failing silently \u2013 no error shown",
+    "description": "Signups appearing to succeed on the frontend (green success toast shown) but users not receiving welcome email and accounts not being created. The signup API is returning 200 even when the downstream user creation fails. This masks the error from users and from our monitoring.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-14T20:30:00Z",
+    "reported_by": "monitoring-bot",
+    "severity": "P3",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-56357",
+    "title": "Intermittent 504 on checkout \u2013 happening maybe 5% of requests",
+    "description": "Gateway logs show occasional 504 timeouts on POST /checkout. Happens under high load. Upstream payments service is healthy. We initially blamed a noisy neighbor on the same node, but after moving the pod, the issue persisted. May be a connection pool saturation issue.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T13:20:00Z",
+    "resolution": "Found that the payments-service had a max concurrent connections limit of 50 in its internal HTTP server config, being exceeded during peak traffic. Increased to 500 and added connection pool metrics to dashboards.",
+    "initial_hypothesis": "Engineering suspects a recent deploy is the cause.",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-29686",
+    "title": "[SEC] API keys visible in error responses",
+    "description": "Security researcher reported that when certain malformed requests are sent to /api/v1/payments/validate, the error response includes internal configuration details including a partial API key. Reproduced locally. This looks like an unhandled exception leaking the config object via the default Flask error handler.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T23:00:00Z",
+    "resolution": "Replaced default Flask error handler with custom handler that returns generic error messages. Rotated all potentially exposed API keys. Patched in v2.17.3. Researcher acknowledged via bug bounty program.",
+    "priority": "critical",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-90607",
+    "title": "Orders created with wrong currency",
+    "description": "17 orders placed by users in Canada show USD instead of CAD. The currency detection logic uses the browser's Accept-Language header, but these users had en-US locale despite being billed in Canada. This is a known limitation that was supposed to be addressed in Q2 but wasn't prioritized.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T21:40:00Z",
+    "resolution": "Switched currency detection to use billing address country rather than Accept-Language header. Issued corrected invoices to 17 affected customers.",
+    "reported_by": "ceo-escalation",
+    "priority": "SEV-1",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-34640",
+    "title": "Kafka broker disk at 94% \u2013 risk of topic unavailability",
+    "description": "Kafka broker-2 disk utilization hit 94%. If it hits 100%, the broker will go offline and partitions will be unavailable. Log retention is set to 7 days but we've had 3x normal write volume this week due to the incident. No one owns the Kafka infra formally right now.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T18:00:00Z",
+    "resolution": "Reduced retention to 3 days temporarily. Added disk space alert at 80%. Long-term: move to tiered storage on S3. Assigned Kafka ownership to platform team.",
+    "reported_by": "product-team",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-11643",
+    "title": "Auth tokens not being invalidated on password change",
+    "description": "When a user changes their password, existing sessions remain valid. This means if an account is compromised and the user changes their password to kick out the attacker, the attacker's token still works until natural expiry (24 hours). This is a significant security gap.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-15T00:00:00Z",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-40848",
+    "title": "Duplicate orders being created on payment retry",
+    "description": "When a payment times out and the user retries, a new order is created instead of resuming the existing one. Affected users end up charged once but with two orders in the system, causing fulfillment to ship twice. Estimated 8\u201312 duplicate shipments this week.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T19:40:00Z",
+    "resolution": "Added idempotency token tied to cart session ID for order creation. Existing duplicates manually resolved with customer support.",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-31159",
+    "title": "CPU spike on auth service every night at 02:00",
+    "description": "Auth service CPU spikes to 95% every night at exactly 02:00 for about 8 minutes. No corresponding traffic increase. Could be a scheduled job \u2014 maybe token cleanup or session pruning. It hasn't caused an outage yet but it's concerning.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-14T02:00:00Z",
+    "resolution": "Identified a nightly cron job doing a full table scan on the sessions table to clean expired tokens, with no index on expires_at. Added index \u2014 CPU spike reduced from 95% to 12%.",
+    "priority": "P1",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-86591",
+    "title": "P1 \u2013 entire platform down, all services 503",
+    "description": "Complete platform outage. All services returning 503. This is catastrophic. Someone may have accidentally applied a network policy that blocks all ingress. Alternatively the Kubernetes control plane might be having issues \u2014 we had a K8s upgrade last night.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T14:02:00Z",
+    "resolution": "Root cause: payments-service outage cascaded through gateway circuit breaker to appear as full outage. K8s and network policy were fine. Improved status page to reflect per-service health rather than single global status.",
+    "initial_hypothesis": "Engineering suspects a recent deploy is the cause.",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-48762",
+    "title": "Search ranking returning irrelevant results after model update",
+    "description": "The new product search ranking model (v3.1) deployed at 10:30 is returning unrelated products as top results. 'Red shoes' is returning kitchen appliances as the first result. Rolling back to v3.0 is recommended but the ML team wants to investigate first.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T10:30:00Z",
+    "resolution": "Model was trained on a dataset with a labeling error \u2014 a batch of product categories was shuffled during the feature extraction pipeline. Rolled back to v3.0. Retrain scheduled with corrected dataset.",
+    "severity": "P3",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-53848",
+    "title": "Occasional NaN prices showing on product listings",
+    "description": "A handful of products showing 'NaN' as their price on the storefront. Appears to be a frontend rendering issue where a null price value from the API isn't being handled. The API is returning null for products where pricing hasn't been set up \u2014 this is valid but the UI can't handle it.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T22:30:00Z",
+    "resolution": "Frontend fix: added null check before rendering price, falls back to 'Price on request'. API fix: added validation to prevent products without prices from being published.",
+    "priority": "critical",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-81824",
+    "title": "Rate limiting too aggressive \u2013 legitimate users blocked",
+    "description": "After tightening rate limits following the bot attack, legitimate enterprise API users are being throttled. The new limit of 100 req/min is too low for their integration use case. One customer is threatening to churn. We may have overcorrected.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T12:00:00Z",
+    "resolution": "Implemented tiered rate limits: standard (100/min), enterprise (2000/min). Enterprise customers get API key-based limits rather than IP-based. Retroactively applied to affected accounts.",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-62369",
+    "title": "Inventory count going negative for popular SKUs",
+    "description": "Three products showing negative inventory counts (-4, -12, -7). This means we oversold. The inventory reservation step runs asynchronously and there's a race condition when multiple orders arrive simultaneously for the same SKU. The check-and-decrement isn't atomic.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T21:00:00Z",
+    "priority": "P1",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-37808",
+    "title": "Payments service pod running as root \u2013 security finding",
+    "description": "Security scan flagged that the payments-service container is running as UID 0 (root). This is against our security policy and poses a privilege escalation risk if the container is compromised. The Dockerfile never set a non-root user.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T23:50:00Z",
+    "resolution": "Added USER 1001 to Dockerfile. Added OPA policy to reject pods running as root in production namespace. Redeployed payments-service.",
+    "severity": "P1",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-36481",
+    "title": "On-call alert fatigue \u2013 noise from false positive monitors",
+    "description": "The on-call engineer received 340 PagerDuty alerts over the weekend, 90% of which were false positives from flapping monitors. The auth service 'high latency' alert fires at > 200ms but normal P95 is 180\u2013220ms. Thresholds were never recalibrated after the infra migration.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-15T04:00:00Z",
+    "resolution": "Audited and recalibrated all alert thresholds based on 30-day baselines. Moved low-signal alerts to warning tickets instead of PagerDuty. Reduced weekend alert volume by 73%.",
+    "priority": "P3",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-85989",
+    "title": "Orders API v1 deprecated but still receiving heavy traffic",
+    "description": "API v1 was officially deprecated 6 months ago but still handling 38% of order traffic. Several enterprise customers never migrated. If we shut it down per the original plan, it will break their integrations. The migration deadline was communicated by email only \u2014 many accounts didn't act.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-15T07:20:00Z",
+    "priority": "SEV-2",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-19702",
+    "title": "Missing logs for 90-minute window during incident",
+    "description": "Post-incident review found that application logs from 14:00\u201315:30 are missing from our log aggregation system. Fluentd was likely overwhelmed and dropped log records during peak error volume. This is a significant observability gap that hampers post-mortem analysis.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T16:20:00Z",
+    "resolution": "Increased Fluentd buffer size and added backpressure handling. Enabled log persistence to local disk as fallback before forwarding to Loki. Added log ingestion rate to monitoring dashboards.",
+    "severity": "P2",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-58440",
+    "title": "Webhook signature validation not enforced",
+    "description": "Stripe webhooks are being processed without verifying the Stripe-Signature header. This means anyone who knows our webhook endpoint URL could send fake payment success events and trigger order fulfillment without actual payment. Found during a code review.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-15T00:40:00Z",
+    "resolution": "Added Stripe webhook signature verification using stripe.WebhookEvent.construct_event(). Verified no fraudulent events were processed historically (all payloads matched expected schema). Deployed in v2.18.0.",
+    "severity": "P1",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-90135",
+    "title": "Auth service slow to respond under load test",
+    "description": "Load test with 500 concurrent users showed auth service response time degrading to 8s at peak. The bottleneck appears to be the bcrypt hashing \u2014 cost factor is set to 14 which is very high. Reducing it should help but we're worried about security implications.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-15T02:20:00Z",
+    "resolution": "Reduced bcrypt cost factor from 14 to 12 (still secure per OWASP). Added async token validation cache. P95 latency under same load dropped to 420ms.",
+    "reported_by": "product-team",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-32594",
+    "title": "Payments service deployed to wrong environment",
+    "description": "A developer accidentally ran the production deploy script targeting the payments-service in the staging cluster instead of prod. Production payments service is on an older version for 22 minutes. No customer impact \u2014 prod was still running, just not updated.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T11:20:00Z",
+    "resolution": "Correct deployment completed manually. Added environment name confirmation prompt to deploy script. Added prod/staging visual distinction to deployment dashboard.",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-76125",
+    "title": "Orders table query taking 45 seconds during peak hours",
+    "description": "During lunch hour peak, some order listing queries are taking 45 seconds. EXPLAIN ANALYZE shows a sequential scan on 40M row table. The query filters on status and created_at but the index only covers status. Added to backlog as 'investigate slow queries' 3 sprints ago with no action.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T11:20:00Z",
+    "resolution": "Added composite index on (status, created_at DESC). Query time dropped to 8ms. Established slow query alert at >1s.",
+    "reported_by": "customer-support",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-65180",
+    "title": "Gateway access logs not capturing client IPs",
+    "description": "All gateway access logs show 10.0.0.1 as the client IP (the load balancer internal IP) instead of the real client IP. The X-Forwarded-For header exists but the gateway isn't configured to log it. This broke our geo-analytics and makes IP-based abuse investigation impossible.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-15T05:40:00Z",
+    "resolution": "Updated nginx log format to use $http_x_forwarded_for instead of $remote_addr. Confirmed real IPs now captured. Historical logs prior to fix will show internal IP.",
+    "reported_by": "monitoring-bot",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-53802",
+    "title": "Refund amounts off by a factor of 100",
+    "description": "Three refunds processed for amounts that were 100x too large. $12.99 refund was processed as $1299.00. The payments service stores amounts in cents internally but the refund API endpoint accepts dollars \u2014 there's a double conversion happening. Stripe blocked two of the three due to amount limit.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T22:20:00Z",
+    "resolution": "Fixed unit conversion bug in refund endpoint. One $1299 refund went through \u2014 recovered from Stripe. Added unit tests for currency conversion edge cases.",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "P1-151",
+    "title": "Auth service not respecting account lockout policy",
+    "description": "Security policy requires account lockout after 5 failed login attempts. Testing shows the lockout is only triggered per-pod, not globally. With 4 auth pods running, an attacker can make 20 attempts total before lockout. The lockout state needs to be in shared Redis, not in-memory.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-15T01:30:00Z",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-11328",
+    "title": "Memory usage growing on gateway pod \u2013 possible leak",
+    "description": "Gateway pod memory has been growing steadily over 5 days: 400MB \u2192 1.2GB with no traffic increase. Prometheus shows heap growing every 6 hours. The team suspects the in-process cache for route configs isn't evicting stale entries. No reproduction in dev yet.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-15T09:00:00Z",
+    "priority": "SEV-1",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-28650",
+    "title": "Orders webhook retries hammering merchant endpoint",
+    "description": "Our webhook retry logic sends requests with exponential backoff but there's no maximum retry cap. One merchant's endpoint has been down for 3 days, and our system has made 15,000 retry attempts to it. This is generating complaints from the merchant about our system DDoSing them.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T23:00:00Z",
+    "resolution": "Added maximum retry cap of 72 attempts over 72 hours. After cap, webhooks moved to dead-letter queue for manual review. Added merchant notification when their endpoint fails consistently.",
+    "reported_by": "on-call-engineer",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-13567",
+    "title": "Staging environment down \u2013 blocking release",
+    "description": "Staging has been completely down since Tuesday's deployment attempt. The deploy failed mid-way and left staging in a broken state. No one has had time to fix it. Two feature releases are blocked. Developers are testing in prod-like environments on their laptops which is not ideal.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-15T10:40:00Z",
+    "resolution": "Re-provisioned staging environment from Terraform. Deployed last known good staging build. Added deployment health check with automatic rollback for future failed deploys.",
+    "reported_by": "ceo-escalation",
+    "priority": "medium",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-59186",
+    "title": "API response bodies being cached incorrectly",
+    "description": "Some authenticated API responses are being cached by Cloudflare at the edge. A user reported seeing another user's account details. After investigation, the Cache-Control and Vary headers are set correctly on most endpoints but three endpoints introduced in the last sprint are missing them.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T16:40:00Z",
+    "resolution": "Added Cache-Control: private, no-store and Vary: Authorization to the three affected endpoints. Purged Cloudflare edge cache. Reviewed all endpoints for correct cache headers \u2014 added linting rule to CI.",
+    "reported_by": "on-call-engineer",
+    "severity": "P3",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-91360",
+    "title": "Users saying they're being charged but getting errors",
+    "description": "Several users posted on our community forum saying their card was charged but they got an error page. We think this might be a frontend timeout issue \u2014 the backend processes the charge but the response doesn't reach the client in time. Or possibly the confirmation page is broken.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T12:08:00Z",
+    "resolution": "Payments were actually pending in queue during Stripe outage. Charges were authorized then later completed. Users received delayed confirmation emails. No double-charging occurred.",
+    "initial_hypothesis": "Suspected DNS misconfiguration.",
+    "reported_by": "ceo-escalation",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-58465",
+    "title": "New orders disappearing after placement",
+    "description": "A handful of users placed orders that show as confirmed in the UI but vanish minutes later. Could be a cache coherence issue \u2014 the order appears in cache, the user sees it, then the cache invalidates and the DB write has failed silently. Needs urgent investigation.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T14:38:00Z",
+    "resolution": "Orders were failing at DB write level due to disk quota exhaustion. Cache showed temporary success. Orders were not actually persisted. Customers re-notified and orders resubmitted after DB recovered.",
+    "related_cluster": "orders_disk",
+    "initial_hypothesis": "Frontend team flagged a possible UI-side bug.",
+    "reported_by": "monitoring-bot",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-45818",
+    "title": "OAuth2 social login not working",
+    "description": "Sign in with Google returning error after the maintenance window. The Google OAuth callback URL is correct, so this is probably something on Google's side. We should check Google Cloud Console for any API quota issues.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-14T09:18:00Z",
+    "resolution": "Google OAuth was working fine. Issue was the JWT validation failure on our end rejecting the session token post-OAuth. Same root cause as secret rotation incident.",
+    "related_cluster": "auth_jwt",
+    "initial_hypothesis": "Possible third-party provider issue.",
+    "reported_by": "monitoring-bot",
+    "incident_id": "INC-4019"
+  },
+  {
+    "ticket_id": "TKT-41864",
+    "title": "API latency through the roof since 2pm",
+    "description": "Dashboard showing P99 latency at 28 seconds since about 14:00. Our APM tool points to the payments service as the slowest upstream. Probably a memory issue on the payments pods \u2014 we should increase the memory limit in the deployment spec.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T14:08:00Z",
+    "resolution": "High latency was caused by gateway queuing requests to payments-service while circuit breaker was half-open, not a memory issue. Memory limits were not relevant.",
+    "reported_by": "ceo-escalation",
+    "severity": "P1",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-47001",
+    "title": "GDPR deletion requests not being fully honored",
+    "description": "A user submitted a GDPR right-to-erasure request. Our deletion job removed their record from the primary DB but missed: the analytics event store, the audit log archive, and the email marketing list export in S3. This is non-compliant and a potential regulatory issue.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-15T04:00:00Z",
+    "priority": "critical",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-89294",
+    "title": "Inventory service not responding \u2013 orders blocked",
+    "description": "Inventory check is timing out for all order creation requests. The inventory service itself is healthy but it's querying a Redis cluster that was restarted for maintenance. The Redis client in inventory service isn't reconnecting automatically after the restart.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T13:30:00Z",
+    "resolution": "Added reconnect logic and exponential backoff to Redis client configuration. Added readiness probe to inventory service that checks Redis connectivity. Deployed fix.",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-52717",
+    "title": "Payment page spinning for 30+ seconds",
+    "description": "Customer reported via live chat that checkout hangs on payment step. No error message shown. Refreshing the page loses their cart. Agent manually refunded and re-placed the order. Looks like a frontend timeout issue.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T12:12:00Z",
+    "resolution": "Payments were queued during Stripe outage. No frontend bug. Charges authorized then completed. Users received delayed confirmation emails.",
+    "related_cluster": "payments_stripe_down",
+    "initial_hypothesis": "Engineering suspects a recent deploy is the cause.",
+    "reported_by": "automated-alert",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-29067",
+    "title": "Order notifications delayed by hours",
+    "description": "Push notifications for order status updates are arriving 3 to 4 hours late. Our notification service looks healthy. Could be an Apple or Google push service delay. Checking APNs status page now.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T15:00:00Z",
+    "resolution": "Root cause was Kafka consumer lag during incident. Notifications were queued and delivered in batch once lag cleared. APNs was not involved.",
+    "reported_by": "monitoring-bot",
+    "priority": "P2",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-76494",
+    "title": "SSO integration returning 401 after maintenance",
+    "description": "Enterprise SSO via SAML is broken. The SAML assertions are being rejected. IT admins think we changed our service provider metadata without telling them. Checking with the SSO team.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-14T09:22:00Z",
+    "resolution": "SAML metadata unchanged. Issue was JWT key rotation causing downstream 401s on session validation, not SAML. SSO team confirmed their config was correct.",
+    "initial_hypothesis": "Frontend team flagged a possible UI-side bug.",
+    "reported_by": "on-call-engineer",
+    "incident_id": "INC-4019"
+  },
+  {
+    "ticket_id": "TKT-79988",
+    "title": "Monitoring shows 100% error rate -- is prod down?",
+    "description": "PagerDuty alert: error rate at 100%. Checked Datadog, all red. First thought: bad Kubernetes rollout. Escalated to VP Engineering. Rolled back last deploy but error rate unchanged.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T14:12:00Z",
+    "resolution": "Rollback was unnecessary. Root cause was payments circuit breaker cascading to gateway, not a code issue. Unnecessary rollback introduced minor config regression.",
+    "related_cluster": "gateway_cb",
+    "initial_hypothesis": "Engineering suspects a recent deploy is the cause.",
+    "reported_by": "customer-support",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-88029",
+    "title": "Payments failing for American Express cards only",
+    "description": "Visa and Mastercard work fine. Amex transactions failing with error code 1005. This has been happening for 2 days. Suspecting a Stripe Amex-specific configuration issue or a currency routing problem.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T15:20:00Z",
+    "resolution": "Amex transactions require a different API endpoint in our Stripe integration. A recent refactor accidentally hardcoded the Visa/MC endpoint for all card types.",
+    "severity": "P3",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-53106",
+    "title": "Order history pagination broken -- shows same page repeatedly",
+    "description": "Clicking next page in order history reloads the same first page. The pagination uses page number in the query param but the API is ignoring it and always returning page 1. Introduced in last sprint refactor.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T19:20:00Z",
+    "priority": "P1",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-45641",
+    "title": "Auth service not logging failed login attempts",
+    "description": "Security audit finding: failed login attempts are not being written to the audit log. Successful logins are logged correctly. The logging call after authentication failure was accidentally removed in a cleanup PR.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-15T02:00:00Z",
+    "resolution": "Restored failed login audit logging. Backfill not possible for the 3-week gap. SIEM alert rules updated to also monitor rate-limiting events as a proxy signal.",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-56060",
+    "title": "Gateway rate limiter using wrong IP header",
+    "description": "The IP-based rate limiter reads from remote_addr instead of X-Real-IP. Since all traffic comes through the load balancer, every request appears to come from the same internal IP. Bot traffic is bypassing per-client rate limiting entirely.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T12:20:00Z",
+    "resolution": "Switched rate limiter to read X-Real-IP header. Per-IP limits now working correctly. This also explains why the earlier bot attack seemed to bypass rate limits.",
+    "reported_by": "security-team",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-38725",
+    "title": "Subscription renewal emails going to spam",
+    "description": "Multiple subscribers reporting renewal reminder emails in spam folder. Email deliverability score is 42 out of 100. Our sending domain lacks DKIM and DMARC records. Also sending from a shared IP with low reputation.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-15T03:10:00Z",
+    "resolution": "Added DKIM records, published DMARC policy. Moved to dedicated sending IP and warmed it over 2 weeks. Deliverability score improved to 89 out of 100.",
+    "severity": "P1",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-14600",
+    "title": "AWS bill $40k over budget this month",
+    "description": "AWS bill this month is $40,000 over the monthly budget. Finance flagged it. Initial investigation points to NAT gateway data transfer spike during the incident week. But EC2 cost also jumped unexpectedly.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-15T07:20:00Z",
+    "resolution": "NAT gateway spike caused by Fluentd log retry storms during incident sending huge volumes through NAT. EC2 cost jump was a dev environment left running. Both addressed.",
+    "reported_by": "on-call-engineer",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-25453",
+    "title": "Orders service not starting after node drain",
+    "description": "After a Kubernetes node drain for maintenance, the orders-service pod failed to reschedule. Error: Insufficient memory. The pod requests 4GB but remaining nodes only have 3.8GB available. Resource request was bumped last sprint without checking cluster capacity.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T15:50:00Z",
+    "resolution": "Reduced orders-service memory request from 4GB to 2.5GB, actual usage is 1.8GB. Pod rescheduled immediately. Added cluster capacity check to pre-deploy pipeline.",
+    "reported_by": "automated-alert",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-17334",
+    "title": "Payments audit log missing transaction IDs",
+    "description": "Compliance team flagged that 30% of entries in the payments audit log are missing the transaction_id field. This field is required for PCI DSS compliance. The field was made optional in a schema migration 6 weeks ago to fix a separate bug.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-15T00:40:00Z",
+    "resolution": "Made transaction_id required again in the audit log schema. Backfilled missing IDs from Stripe event logs where possible, 92% recovered. Flagged 8% gap to compliance team.",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-29321",
+    "title": "Wrong environment config loaded in production",
+    "description": "The payments service in production is pointing to the staging Stripe API key. All production transactions are going through Stripe test mode and failing silently. Live cards are being rejected as invalid test cards.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T11:20:00Z",
+    "resolution": "Corrected environment variable. STRIPE_API_KEY_PROD was accidentally set to the test key in the production k8s secret. All transactions during the 40-minute window were re-attempted and succeeded.",
+    "reported_by": "on-call-engineer",
+    "priority": "P3",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-85442",
+    "title": "OAuth callback URL mismatch after domain change",
+    "description": "After migrating to a new domain, the Google OAuth callback URL was updated but Facebook and GitHub OAuth apps were not. Facebook and GitHub social login returning redirect_uri_mismatch error for all users.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-15T02:20:00Z",
+    "resolution": "Updated callback URLs in Facebook Developer Console and GitHub OAuth App settings. Tested all social login flows.",
+    "reported_by": "security-team",
+    "severity": "P3",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-41444",
+    "title": "Orders export feature leaking other customer data",
+    "description": "The bulk order export feature for admin users is including orders from ALL customers, not just the requesting account. There is no tenancy filter in the export query. Any admin-level user can download the entire customer order history.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T23:20:00Z",
+    "reported_by": "security-team",
+    "priority": "critical",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-27776",
+    "title": "Auth service rejecting valid MFA codes",
+    "description": "Users with TOTP MFA enabled are having their valid codes rejected. The auth server clock drift is 45 seconds off NTP. TOTP has a 30-second tolerance window, so codes at the edge of validity are rejected.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-14T14:40:00Z",
+    "resolution": "Synced auth service hosts with NTP. Increased TOTP tolerance window to plus or minus 60 seconds. Drift was caused by a suspended VM that was resumed without clock sync.",
+    "reported_by": "customer-support",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-31171",
+    "title": "Payments service generating duplicate invoice numbers",
+    "description": "Invoice numbers are generated using a counter stored in Redis. After the Redis cluster failover last week, the counter reset to 1. We now have roughly 400 invoices with numbers that conflict with existing invoices from 6 months ago.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T17:50:00Z",
+    "resolution": "Implemented UUID-based invoice IDs instead of sequential counters. Renamed conflicting invoices with a -v2 suffix. Notified affected customers.",
+    "reported_by": "on-call-engineer",
+    "severity": "P3",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-85570",
+    "title": "CPU spike when loading analytics dashboard",
+    "description": "Loading the admin analytics dashboard spikes the orders DB CPU to 95% for 20 to 30 seconds. The dashboard fires 14 separate unoptimized queries simultaneously on page load. This was fine in dev with 1000 rows but production has 40 million orders.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-15T00:20:00Z",
+    "resolution": "Consolidated 14 queries into 3 optimized queries. Added materialized view for summary statistics refreshed every 5 minutes. Dashboard load time reduced from 28 seconds to 1.2 seconds.",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-76373",
+    "title": "Gateway not stripping internal headers before forwarding",
+    "description": "The gateway forwards X-Internal-User-Role headers sent by clients upstream to backend services. An attacker can set X-Internal-User-Role: admin in their request and backend services that trust this header will grant admin privileges.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-15T03:10:00Z",
+    "resolution": "Added header stripping for all X-Internal-* headers at the gateway before forwarding. Backend services now enforce authorization independently.",
+    "reported_by": "on-call-engineer",
+    "priority": "P3",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-47700",
+    "title": "Payments retry logic retrying on non-retryable errors",
+    "description": "The payment retry mechanism retries on all errors including validation errors such as invalid card number. A typo in a card number triggers 3 payment attempts and 3 declines, which can flag the customer as suspicious with their bank.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-14T18:40:00Z",
+    "resolution": "Updated retry logic to only retry on network errors and 429 or 503 status codes. Validation errors such as 400 and 402 are now returned immediately without retry.",
+    "severity": "P1",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-14672",
+    "title": "Auth service bcrypt timing difference reveals valid usernames",
+    "description": "Login timing varies depending on whether a username exists in the database. For valid usernames, bcrypt is run. For invalid usernames, we return immediately. This timing difference allows enumeration of valid user accounts.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-15T07:20:00Z",
+    "reported_by": "customer-support",
+    "severity": "P1",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-98963",
+    "title": "Missing audit trail for admin actions",
+    "description": "An internal security review found that admin-level actions such as refunds, account deletions, and plan changes are not recorded in the audit log. If an admin abuses their access or makes an error, there is no record of what was done or when.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-15T05:40:00Z",
+    "reported_by": "security-team",
+    "severity": "P1",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-70325",
+    "title": "CORS errors blocking web app in Safari only",
+    "description": "Safari users getting CORS errors on API requests. Chrome and Firefox work fine. Safari is stricter about CORS preflight caching. Our gateway does not return the correct response to OPTIONS preflight requests for certain endpoints.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T22:40:00Z",
+    "resolution": "Fixed OPTIONS preflight handler to return correct Access-Control-Allow headers. Added CORS integration test covering Safari preflight behavior.",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-35427",
+    "title": "Orders microservice deployed without resource limits",
+    "description": "New order-analytics sidecar was deployed without CPU or memory resource limits. It has been consuming unbounded CPU on shared nodes, causing resource starvation for neighboring pods. This explains the sporadic slowness on orders service this week.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-15T01:30:00Z",
+    "resolution": "Added resource requests and limits to analytics sidecar. Neighboring pods immediately stabilized. Made resource limits mandatory in deployment admission webhook.",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-47161",
+    "title": "Customer PII appearing in error tracking tool",
+    "description": "Sentry error reports include full request payloads, which sometimes contain customer email addresses, names, and partial card numbers. This PII is being stored unencrypted in a third-party tool, which is a GDPR and PCI violation.",
+    "affected_service": "payments",
+    "timestamp": "2024-06-15T02:20:00Z",
+    "resolution": "Added PII scrubbing middleware that redacts sensitive fields before sending to Sentry. Requested Sentry delete historical events via their data deletion API.",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-51289",
+    "title": "Slow order creation under high load -- mutex contention",
+    "description": "Order creation P99 spikes to 12 seconds during flash sales. Profiling shows a global mutex in the order ID generation code being held for 200ms per request. Under load, requests queue up waiting for the lock.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T13:30:00Z",
+    "resolution": "Replaced sequential order ID generation with UUID v7. Mutex removed. P99 under same load dropped to 380ms.",
+    "incident_id": "INC-4021"
+  },
+  {
+    "ticket_id": "TKT-99279",
+    "title": "Gateway health check slow response causing unhealthy marking",
+    "description": "ALB health check on the health endpoint returns 200 but takes 3.2 seconds because it runs a full DB query. The ALB marks instances as unhealthy after 2 seconds. Instances are being deregistered under load, reducing capacity and worsening the problem.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T16:00:00Z",
+    "resolution": "Changed health endpoint to return immediately with a shallow check. Added a separate internal deep-health endpoint. Instances re-registered within 2 minutes.",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-76102",
+    "title": "Inventory count going negative for high-demand SKUs",
+    "description": "Three products show negative inventory counts. This means we oversold. The inventory reservation step runs asynchronously and there is a race condition when multiple orders arrive simultaneously for the same SKU. The check-and-decrement is not atomic.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T21:00:00Z",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-59614",
+    "title": "Webhook delivery hammering a down merchant endpoint",
+    "description": "Our webhook retry logic sends requests with exponential backoff but there is no maximum retry cap. One merchant endpoint has been down for 3 days and our system has made 15,000 retry attempts to it. The merchant is complaining about being DDoSed by our system.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-14T23:00:00Z",
+    "resolution": "Added maximum retry cap of 72 attempts over 72 hours. After cap, webhooks moved to dead-letter queue for manual review. Added merchant notification when their endpoint fails consistently.",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-20340",
+    "title": "On-call alert fatigue from false positive monitors",
+    "description": "The on-call engineer received 340 PagerDuty alerts over the weekend, 90% false positives from flapping monitors. The auth service high-latency alert fires at over 200ms but normal P95 is 180 to 220ms. Thresholds were never recalibrated after infra migration.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-15T04:00:00Z",
+    "resolution": "Audited and recalibrated all alert thresholds based on 30-day baselines. Moved low-signal alerts to warning tickets instead of PagerDuty. Weekend alert volume reduced by 73%.",
+    "reported_by": "on-call-engineer",
+    "priority": "medium",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-37802",
+    "title": "API v1 deprecated but still receiving 38% of traffic",
+    "description": "API v1 was officially deprecated 6 months ago but still handling 38% of order traffic. Several enterprise customers never migrated. Shutting it down per the original plan would break their integrations. Migration deadline was communicated by email only.",
+    "affected_service": "orders",
+    "timestamp": "2024-06-15T07:20:00Z",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-79167",
+    "title": "Missing logs for 90-minute window during incident",
+    "description": "Post-incident review found application logs from 14:00 to 15:30 are missing from our log aggregation system. Fluentd was overwhelmed and dropped log records during peak error volume. This hampers post-mortem analysis.",
+    "affected_service": "gateway",
+    "timestamp": "2024-06-14T16:20:00Z",
+    "resolution": "Increased Fluentd buffer size and added backpressure handling. Enabled log persistence to local disk before forwarding to Loki. Added log ingestion rate to monitoring dashboards.",
+    "reported_by": "automated-alert",
+    "severity": "P2",
+    "incident_id": null
+  },
+  {
+    "ticket_id": "TKT-55521",
+    "title": "Auth service not invalidating tokens on password change",
+    "description": "When a user changes their password, existing sessions remain valid for 24 hours. If an account is compromised and the user changes the password to kick out the attacker, the attacker token still works until natural expiry. This is a significant security gap discovered during a penetration test.",
+    "affected_service": "auth",
+    "timestamp": "2024-06-15T09:00:00Z",
+    "reported_by": "security-team",
+    "severity": "P1",
+    "incident_id": null
+  }
+]

@@ -1,0 +1,65 @@
+Incident Event Log — Schema Reference
+======================================
+
+This file documents the columns in incident_event_log.csv.
+All timestamps use ISO 8601 UTC format (YYYY-MM-DDTHH:MM:SSZ).
+Service names match the canonical IDs in service_dependency_graph.json.
+Incident IDs match the incident_id field in incident_tickets.json and production_logs.json.
+
+Columns:
+
+1. incident_id
+   Unique identifier for the incident (e.g., INC-4019, INC-4021, INC-3908).
+   Cross-references: incident_tickets.json[incident_id], production_logs.json[incident_id].
+
+2. service
+   The primary service involved in this event.
+   Values: auth | gateway | payments | orders | redis | inventory | notifications | search
+   Cross-references: service_dependency_graph.json[nodes[].id], deployment_records.json[service],
+   runbooks/[service].json[service].
+
+3. event_type
+   The type of event in the incident lifecycle.
+   Values:
+     ALERT_FIRED         — Automated monitoring alert triggered
+     TICKET_OPENED       — Support or engineering ticket created
+     INVESTIGATION_START — On-call engineer began active investigation
+     ROOT_CAUSE_IDENTIFIED — Root cause determined
+     MITIGATION_APPLIED  — A fix or workaround was applied
+     DEPLOYMENT          — A code or config change deployed during incident
+     IMPACT_DETECTED     — Downstream/upstream service impact observed
+     RECOVERY            — Service returned to healthy state
+     MONITORING          — Team watching metrics after mitigation
+     RESOLVED            — Incident formally marked resolved
+
+4. timestamp
+   ISO 8601 UTC timestamp of when this event occurred (YYYY-MM-DDTHH:MM:SSZ).
+   Cross-references: production_logs.json[timestamp], incident_tickets.json[timestamp],
+   deployment_records.json[timestamp].
+
+5. severity
+   Incident severity at the time of this event. May downgrade as incident resolves.
+   Values: P1 (critical) | P2 (high) | P3 (medium) | P4 (low)
+   Cross-references: incident_tickets.json[severity].
+
+6. description
+   Human-readable description of what happened at this event step.
+
+7. actor
+   Who performed or triggered this action. Can be a person (email), team, or automated system.
+   Values: pagerduty | automated-alert | customer-support | on-call-engineer |
+           alice@example.com | bob@example.com | carol@example.com | dave@example.com
+
+8. related_ticket_id
+   Ticket ID this event is associated with (may be empty if no ticket exists for this event).
+   Cross-references: incident_tickets.json[ticket_id].
+
+9. related_deployment_id
+   Deployment ID that caused or resolved this incident event (may be empty).
+   Cross-references: deployment_records.json[deployment_id].
+
+Known Incidents Covered:
+  INC-4019  Auth JWT secret rotation mismatch — 2024-06-14 09:00–10:45 UTC — service: auth
+  INC-4021  Multi-service cascade (Stripe 503 + orders disk quota) — 2024-06-14 11:58–15:30 UTC
+            Services affected: payments, gateway, orders, orders-db
+  INC-3908  Redis OOM (noeviction policy) — 2024-06-14 11:00–11:45 UTC — services: redis, auth

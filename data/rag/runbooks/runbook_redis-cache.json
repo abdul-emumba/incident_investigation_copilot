@@ -1,0 +1,222 @@
+{
+  "runbook_id": "RB-REDIS-001",
+  "service": "redis",
+  "version": "7.x",
+  "last_updated": "2024-05-18",
+  "last_updated_by": "carol@example.com",
+  "owner": {
+    "team": "Platform Engineering",
+    "slack": "#platform-eng",
+    "on_call": "pagerduty:platform-oncall"
+  },
+  "dependencies": {
+    "hard": [],
+    "soft": [],
+    "upstream_consumers": [
+      "auth-service",
+      "inventory-service",
+      "gateway"
+    ],
+    "notes": "Redis itself has no dependencies. But it is a dependency for auth-service (sessions, rate limits, lockout state) and inventory-service (stock cache). A Redis outage silently degrades auth \u2014 auth falls back to DB but at much higher latency. Monitor auth p99 latency as a signal of Redis health."
+  },
+  "common_issues": [
+    {
+      "issue_id": "REDIS-001",
+      "title": "Redis OOM \u2014 out of memory / writes failing",
+      "symptoms": [
+        "auth-service logs: 'OOM command not allowed when used memory > maxmemory'",
+        "New session creation failing while reads still work",
+        "Redis INFO memory shows used_memory > maxmemory"
+      ],
+      "likely_causes": [
+        "Eviction policy set to noeviction \u2014 writes blocked when memory full",
+        "Memory limit too low for current session volume",
+        "Key expiry not being set on some session types \u2014 keys accumulating indefinitely",
+        "Memory fragmentation causing effective capacity to be lower than configured"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Check Redis memory state",
+          "command": "kubectl exec -it redis-0 -- redis-cli info memory | grep -E 'used_memory_human|maxmemory_human|mem_fragmentation_ratio|maxmemory_policy'",
+          "note": "Key values: used_memory near maxmemory = near limit. mem_fragmentation_ratio > 1.5 = significant fragmentation. maxmemory_policy = noeviction is dangerous."
+        },
+        {
+          "order": 2,
+          "action": "Immediately change eviction policy to allow writes",
+          "command": "kubectl exec -it redis-0 -- redis-cli CONFIG SET maxmemory-policy allkeys-lru",
+          "note": "This is a live config change \u2014 takes effect immediately. allkeys-lru will evict the least recently used keys when memory is full. This may evict some sessions (users get logged out) but is better than complete write failure. This change does not persist across restarts \u2014 update the configmap too."
+        },
+        {
+          "order": 3,
+          "action": "Make the eviction policy change persistent",
+          "command": "kubectl edit configmap redis-config",
+          "note": "Find the maxmemory-policy line and change to allkeys-lru. If you can't find the configmap, ask Carol. The in-memory change from step 2 will be lost on pod restart."
+        },
+        {
+          "order": 4,
+          "action": "Increase maxmemory if eviction is too aggressive",
+          "command": "kubectl exec -it redis-0 -- redis-cli CONFIG SET maxmemory 8gb",
+          "note": "Current limit is 4GB. Increasing to 8GB is the quick fix. The node must have available memory \u2014 check with 'kubectl top node'. Make this persistent in the configmap. File a capacity ticket."
+        },
+        {
+          "order": 5,
+          "action": "Check for keys without TTL (potential leak)",
+          "command": "kubectl exec -it redis-0 -- redis-cli --scan --pattern 'session:*' | head -20 | xargs -I{} redis-cli TTL {}",
+          "note": "TTL of -1 means no expiry \u2014 these keys accumulate forever. This is likely a bug in auth-service. Keys should have expiry matching JWT lifetime. Report to identity team."
+        }
+      ],
+      "escalation": "Redis OOM causing auth write failures is P1 \u2014 sessions cannot be created. Page platform on-call. Notify identity team."
+    },
+    {
+      "issue_id": "REDIS-002",
+      "title": "Counter reset after Redis failover / restart",
+      "symptoms": [
+        "Duplicate invoice numbers or IDs after a Redis restart",
+        "Rate limit counters reset \u2014 users who were throttled can suddenly make requests again",
+        "Account lockout counters cleared \u2014 brute force protection temporarily bypassed"
+      ],
+      "likely_causes": [
+        "Counters stored in Redis with no persistence or backup \u2014 Redis treats them as ephemeral",
+        "Redis AOF or RDB persistence not enabled or not recovering correctly",
+        "Failover promoted a replica that was slightly behind"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Confirm counter reset occurred",
+          "command": "kubectl exec -it redis-0 -- redis-cli DBSIZE",
+          "note": "A suspiciously low DBSIZE after a restart/failover confirms the data was lost. Compare against what it was before \u2014 check Datadog Redis metrics for 'connected_clients' and 'keyspace_hits'."
+        },
+        {
+          "order": 2,
+          "action": "Check Redis persistence configuration",
+          "command": "kubectl exec -it redis-0 -- redis-cli CONFIG GET save && redis-cli CONFIG GET appendonly",
+          "note": "appendonly should be 'yes'. save should have values like '3600 1 300 100 60 10000'. If appendonly is 'no' and save is empty, Redis is fully in-memory \u2014 no persistence at all. That's a configuration error."
+        },
+        {
+          "order": 3,
+          "action": "For invoice number specifically \u2014 migrate to UUID or DB-sequence",
+          "command": "N/A \u2014 this is a code change in payments-service.",
+          "note": "Redis counters should not be used for anything that requires uniqueness guarantees across restarts. Invoice numbers in Redis is an architectural error. This was fixed in payments-service v3.18.x \u2014 verify that version is deployed."
+        },
+        {
+          "order": 4,
+          "action": "For rate limit / lockout counters \u2014 accept the reset and monitor",
+          "command": "Monitor auth logs for brute force attempts immediately after a Redis restart.",
+          "note": "Not much you can do about lost rate limit state in real-time. The main risk is that a brute force attacker who was locked out gets a new window of attempts. Monitor and re-block if needed."
+        }
+      ],
+      "escalation": "If security-sensitive counters (lockout, rate limit) were reset during an active attack, treat as security incident. Page security team."
+    },
+    {
+      "issue_id": "REDIS-003",
+      "title": "Redis cluster node down / split-brain",
+      "symptoms": [
+        "CLUSTERDOWN errors in redis-cli",
+        "Some keys inaccessible (wrong slot / redirected to dead node)",
+        "Replication lag visible in redis-cli cluster info"
+      ],
+      "likely_causes": [
+        "Node pod crashed or was evicted by Kubernetes",
+        "Network partition between cluster nodes",
+        "Node ran out of memory and was OOMKilled by kernel"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Check cluster state",
+          "command": "kubectl exec -it redis-0 -- redis-cli cluster info | grep cluster_state",
+          "expected": "cluster_state:ok",
+          "note": "cluster_state:fail means the cluster has lost quorum. You need to investigate which nodes are down."
+        },
+        {
+          "order": 2,
+          "action": "List cluster nodes and their states",
+          "command": "kubectl exec -it redis-0 -- redis-cli cluster nodes",
+          "note": "Look for nodes with 'fail' or 'disconnected' flag. Note their IDs."
+        },
+        {
+          "order": 3,
+          "action": "Check if failed node pods are running in Kubernetes",
+          "command": "kubectl get pods -l app=redis",
+          "note": "If a Redis pod is in CrashLoopBackOff or Pending, that's your failed node. Fix the pod first, then let the cluster auto-recover."
+        },
+        {
+          "order": 4,
+          "action": "If node is running but cluster thinks it's down, try manual failover",
+          "command": "kubectl exec -it redis-0 -- redis-cli cluster reset soft",
+          "note": "Try soft reset first. If that doesn't work, you're in deeper trouble than this runbook covers. Get Carol on the call."
+        },
+        {
+          "order": 5,
+          "action": "After recovery, verify all shards have quorum",
+          "command": "kubectl exec -it redis-0 -- redis-cli cluster info | grep -E 'cluster_size|cluster_known_nodes|cluster_slots_ok'",
+          "note": "cluster_slots_ok should equal 16384 (total slots). Any missing slots = data loss risk."
+        }
+      ],
+      "escalation": "Redis cluster split-brain is P1. Page platform on-call immediately. Do not attempt to force-write to a degraded cluster."
+    },
+    {
+      "issue_id": "REDIS-004",
+      "title": "High Redis latency / slow commands",
+      "symptoms": [
+        "auth-service p99 latency elevated even when auth pods are healthy",
+        "Redis LATENCY HISTORY showing spikes",
+        "SLOWLOG entries accumulating"
+      ],
+      "likely_causes": [
+        "Large key scan operation blocking the single-threaded event loop",
+        "High memory fragmentation causing GC-like pauses",
+        "KEYS * command being run by someone \u2014 never do this in production",
+        "Network latency between auth-service and Redis (cross-AZ traffic)"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Check Redis slow log",
+          "command": "kubectl exec -it redis-0 -- redis-cli SLOWLOG GET 10",
+          "note": "Shows recent slow commands with execution time in microseconds. KEYS *, SMEMBERS on large sets, or SORT commands are usual suspects."
+        },
+        {
+          "order": 2,
+          "action": "Check if KEYS * is being used anywhere",
+          "command": "kubectl exec -it redis-0 -- redis-cli MONITOR | head -100",
+          "note": "MONITOR is extremely high overhead \u2014 only run for a few seconds. KEYS * in production is forbidden \u2014 it blocks all other operations. If you see it, find who's running it and stop them immediately."
+        },
+        {
+          "order": 3,
+          "action": "Check memory fragmentation",
+          "command": "kubectl exec -it redis-0 -- redis-cli info memory | grep mem_fragmentation_ratio",
+          "note": "Ratio > 1.5 is concerning, > 2.0 is bad. You can trigger a defrag: redis-cli CONFIG SET activedefrag yes. This runs in the background and reduces fragmentation over time."
+        },
+        {
+          "order": 4,
+          "action": "Check cross-AZ traffic if latency is consistent",
+          "command": "Check whether auth-service pods are in the same AZ as the Redis primary. kubectl get pods -l app=auth-service -o wide (check node). kubectl get pods -l app=redis-0 -o wide (check node).",
+          "note": "Cross-AZ Redis calls add 1-3ms per call. With many calls per request, this adds up. Ideally, auth-service and Redis primary should be in the same AZ. Topology-aware routing is a future improvement \u2014 JIRA PLAT-189."
+        }
+      ],
+      "escalation": "Redis latency affecting auth is P2. Notify #platform-eng. If p99 auth latency exceeds 1 second, escalate to P1."
+    }
+  ],
+  "general_health_checks": [
+    "kubectl exec redis-0 -- redis-cli ping \u2014 should return PONG",
+    "kubectl exec redis-0 -- redis-cli info memory | grep used_memory_human",
+    "kubectl exec redis-0 -- redis-cli cluster info | grep cluster_state \u2014 expect 'ok'",
+    "Check Datadog: 'Redis Overview' \u2014 ops/sec, connected clients, memory usage, hit rate",
+    "kubectl exec redis-0 -- redis-cli info stats | grep evicted_keys \u2014 non-zero means eviction is happening"
+  ],
+  "known_gaps": [
+    "Redis persistence config is in a configmap but live CONFIG SET changes don't persist through pod restarts \u2014 the two can drift",
+    "No automated test for Redis failover behavior in auth-service",
+    "Cross-AZ topology-aware routing not implemented \u2014 JIRA PLAT-189",
+    "KEYS * is not blocked at the ACL level \u2014 relies on developer discipline",
+    "Backup verification procedure not documented \u2014 we assume RDB backups work but haven't tested restore recently"
+  ],
+  "notes": "Redis is shared infrastructure. Changes to Redis config affect all consumers (auth, inventory, gateway). Coordinate any planned Redis maintenance with all consuming teams in advance. Give at least 24 hours notice for planned restarts.",
+  "incident_examples": [
+    "INC-3908",
+    "INC-3991"
+  ]
+}

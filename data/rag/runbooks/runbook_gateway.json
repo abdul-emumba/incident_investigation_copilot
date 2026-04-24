@@ -1,0 +1,313 @@
+{
+  "runbook_id": "RB-GW-001",
+  "service": "gateway",
+  "version": "1.x",
+  "last_updated": "2024-06-17",
+  "last_updated_by": "carol@example.com",
+  "owner": {
+    "team": "Platform Engineering",
+    "slack": "#platform-eng",
+    "on_call": "pagerduty:platform-oncall"
+  },
+  "dependencies": {
+    "hard": [
+      "cloudflare"
+    ],
+    "soft": [
+      "auth-service",
+      "payments-service",
+      "orders-service",
+      "search-service"
+    ],
+    "notes": "The gateway itself has very few hard dependencies \u2014 it's stateless and just proxies. However, it is the front door for everything, so its health impacts all users. When the gateway appears down, check upstreams first \u2014 a bad upstream can make the gateway look broken. Cloudflare sits in front of us; if Cloudflare has an incident, we appear down globally even if our infra is fine."
+  },
+  "common_issues": [
+    {
+      "issue_id": "GW-001",
+      "title": "All API endpoints returning 502 / 503",
+      "symptoms": [
+        "External uptime checks firing from multiple regions",
+        "100% of requests failing",
+        "Cloudflare dashboard showing origin errors",
+        "Customers reporting site is down"
+      ],
+      "likely_causes": [
+        "Upstream service(s) unhealthy \u2014 gateway correctly returning 5xx when upstreams fail (check each upstream before assuming gateway issue)",
+        "Gateway pods themselves crashed (less common)",
+        "Cloudflare misconfiguration or Cloudflare incident",
+        "SSL certificate expired",
+        "ALB health check failure causing instance deregistration"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Check gateway pods are running",
+          "command": "kubectl get pods -l app=gateway",
+          "note": "If pods are healthy, the problem is almost certainly an upstream. If pods are crashing, check logs first."
+        },
+        {
+          "order": 2,
+          "action": "Check which upstreams are healthy",
+          "command": "kubectl exec deploy/gateway -- curl -s localhost:8080/internal/upstream-health | jq .",
+          "note": "This lists all upstream health. UNHEALTHY means the circuit breaker has opened for that upstream. A single unhealthy upstream doesn't cause all 502s \u2014 check which endpoints are failing."
+        },
+        {
+          "order": 3,
+          "action": "Check SSL certificate validity",
+          "command": "echo | openssl s_client -connect api.example.com:443 2>/dev/null | openssl x509 -noout -dates",
+          "note": "If cert is expired, everything HTTPS will fail. Renew immediately using the cert renewal runbook (find it on Confluence \u2014 search 'TLS renewal'). This has a 14-day warning alert that should have fired."
+        },
+        {
+          "order": 4,
+          "action": "Check Cloudflare status",
+          "command": "curl -s https://www.cloudflarestatus.com/api/v2/status.json | jq .status.description",
+          "note": "If Cloudflare is having an incident, we can't do much. Monitor their status page. In a true Cloudflare outage, direct traffic to origin is possible but not recommended without security review."
+        },
+        {
+          "order": 5,
+          "action": "Check ALB target group health",
+          "command": "aws elbv2 describe-target-health --target-group-arn <gateway-tg-arn> | jq '.TargetHealthDescriptions[] | {id: .Target.Id, state: .TargetHealth.State}'",
+          "note": "If targets are draining or unhealthy, the gateway is being deregistered. Check the /health endpoint response time \u2014 if it's > 2 seconds, ALB marks it unhealthy. See GW-006."
+        }
+      ],
+      "escalation": "If more than 50% of endpoints are failing for more than 2 minutes, this is P1. Page platform on-call. Notify #incidents channel with initial assessment."
+    },
+    {
+      "issue_id": "GW-002",
+      "title": "Circuit breaker open for an upstream service",
+      "symptoms": [
+        "Specific set of endpoints returning 503 with Retry-After header",
+        "Datadog shows 'circuit_breaker_state=OPEN' for a service",
+        "Logs contain 'circuit breaker OPEN for <service-name>'"
+      ],
+      "likely_causes": [
+        "Upstream service is genuinely degraded \u2014 circuit breaker working correctly",
+        "Circuit breaker threshold too low (failure_threshold=1 has caused false opens before \u2014 see INC-4021)",
+        "Transient network blip caused spike in errors that tripped the breaker"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Identify which circuit breaker is open",
+          "command": "kubectl exec deploy/gateway -- curl -s localhost:8080/internal/circuit-breaker/status | jq .",
+          "note": "Note the state (OPEN, HALF_OPEN, CLOSED) and the error_count and failure_threshold for each upstream."
+        },
+        {
+          "order": 2,
+          "action": "Check if the upstream is actually unhealthy",
+          "command": "kubectl exec deploy/gateway -- curl -s -o /dev/null -w '%{http_code}' http://<upstream-service>.svc/health",
+          "note": "If the upstream's own health endpoint returns 200, the breaker may have tripped on a transient error. If it returns 5xx or times out, the upstream is genuinely down \u2014 fix the upstream, not the breaker."
+        },
+        {
+          "order": 3,
+          "action": "Check failure_threshold configuration",
+          "command": "kubectl get configmap gateway-config -o json | jq '.data | fromjson | .circuit_breaker'",
+          "note": "failure_threshold should be 5. If it's 1, this is the misconfiguration from INC-4021. Change it to 5 and redeploy. This has been a recurring issue."
+        },
+        {
+          "order": 4,
+          "action": "If upstream is healthy, manually reset the circuit breaker",
+          "command": "kubectl exec deploy/gateway -- curl -s -X POST localhost:8080/internal/circuit-breaker/<service-name>/reset",
+          "note": "Only do this if you have confirmed the upstream is healthy. The breaker will re-open within seconds if the upstream is still bad."
+        },
+        {
+          "order": 5,
+          "action": "Monitor for 5 minutes after reset",
+          "command": "watch -n 5 'kubectl exec deploy/gateway -- curl -s localhost:8080/internal/circuit-breaker/status | jq'",
+          "note": "If the breaker re-opens, the upstream is still unhealthy. Stop resetting and focus on the upstream."
+        }
+      ],
+      "escalation": "Circuit breaker open for payments-service is P1 \u2014 page both platform and payments on-call. Other services are P2."
+    },
+    {
+      "issue_id": "GW-003",
+      "title": "Rate limiting blocking legitimate users",
+      "symptoms": [
+        "Specific users or API keys getting 429 errors",
+        "Enterprise customers complaining about throttling",
+        "High 429 rate in Datadog without corresponding bot traffic spike"
+      ],
+      "likely_causes": [
+        "Rate limit threshold too low for the traffic pattern",
+        "Rate limiter keying on wrong field (IP instead of API key, or vice versa)",
+        "Rate limiter reading from wrong IP header \u2014 if using remote_addr instead of X-Real-IP, all traffic looks like it comes from the load balancer IP and gets throttled together",
+        "Legitimate enterprise users exceeding standard tier limits"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Identify who is being rate limited",
+          "command": "kubectl logs deploy/gateway | grep '429' | awk '{print $NF}' | sort | uniq -c | sort -rn | head -20",
+          "note": "This shows what's being rate limited. If everything is from one IP (10.0.0.x), the rate limiter is reading from the wrong header \u2014 it's seeing the load balancer IP."
+        },
+        {
+          "order": 2,
+          "action": "Check which IP header the rate limiter is using",
+          "command": "kubectl get configmap gateway-config -o json | jq '.data | fromjson | .rate_limit.ip_header'",
+          "expected": "Should be 'X-Real-IP', not 'remote_addr'",
+          "note": "If it's 'remote_addr', change it. This caused an incident before where bot traffic bypassed rate limiting entirely because all requests appeared to be from the same internal IP."
+        },
+        {
+          "order": 3,
+          "action": "Check rate limit tiers for affected user/API key",
+          "command": "kubectl exec deploy/gateway -- curl -s localhost:8080/internal/rate-limit/status/<api-key> | jq .",
+          "note": "Shows current tier (standard=100/min, enterprise=2000/min) and current usage. If an enterprise customer is on the standard tier, that's a configuration error \u2014 update their tier."
+        },
+        {
+          "order": 4,
+          "action": "Temporarily whitelist an affected API key if urgent",
+          "command": "kubectl set env deployment/gateway RATE_LIMIT_WHITELIST=<api-key>",
+          "note": "This is a hacky fix. Comma-separate multiple keys. Restart required. Use only for genuine emergencies. File a proper fix ticket."
+        }
+      ],
+      "escalation": "If rate limiting is causing revenue impact (enterprise customers blocked), notify Carol and the account manager for the affected customer."
+    },
+    {
+      "issue_id": "GW-004",
+      "title": "CORS errors for specific clients or routes",
+      "symptoms": [
+        "Browser console showing CORS errors",
+        "Preflight OPTIONS requests returning incorrect headers",
+        "Affects specific browsers (often Safari specifically)",
+        "Works from Postman but not from browser"
+      ],
+      "likely_causes": [
+        "Missing Access-Control-Allow headers on OPTIONS response",
+        "Vary: Origin header not set \u2014 CDN caching CORS responses incorrectly",
+        "New endpoint added without CORS config",
+        "Safari has stricter CORS preflight caching than Chrome \u2014 a config that works in Chrome may fail in Safari"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Reproduce the CORS error with curl",
+          "command": "curl -v -X OPTIONS https://api.example.com/<failing-path> -H 'Origin: https://app.example.com' -H 'Access-Control-Request-Method: POST'",
+          "note": "Check the response headers. You should see Access-Control-Allow-Origin, Access-Control-Allow-Methods, Access-Control-Allow-Headers, and Vary: Origin."
+        },
+        {
+          "order": 2,
+          "action": "Check gateway CORS configuration",
+          "command": "kubectl get configmap gateway-config -o json | jq '.data | fromjson | .cors'",
+          "note": "Verify that the failing route is included in the CORS rules. New routes are not automatically CORS-enabled."
+        },
+        {
+          "order": 3,
+          "action": "Add CORS config for missing route",
+          "command": "Edit gateway-config configmap and add the route to the cors.allowed_routes list. Then: kubectl rollout restart deployment/gateway",
+          "note": "Rollout restart is zero-downtime but will cause brief latency spike. Do during off-peak if possible. Changes to configmap take effect after pod restart."
+        },
+        {
+          "order": 4,
+          "action": "If Cloudflare is caching CORS responses, purge cache",
+          "command": "Log into Cloudflare > Caching > Cache Purge > Purge by URL for the affected endpoint",
+          "note": "Cloudflare should not be caching responses without Vary: Origin. If it is, check the Cloudflare cache rules for that route."
+        }
+      ],
+      "escalation": "CORS errors are usually P3 unless they're blocking a key user flow. Notify #platform-eng during business hours."
+    },
+    {
+      "issue_id": "GW-005",
+      "title": "Logging / observability gaps \u2014 missing client IPs or log entries",
+      "symptoms": [
+        "All access logs showing 10.0.0.1 as client IP",
+        "Grafana dashboards showing zero or flat metrics",
+        "Log aggregation showing gaps in log timeline"
+      ],
+      "likely_causes": [
+        "Gateway logging using remote_addr instead of X-Forwarded-For / X-Real-IP",
+        "Metrics exporter misconfigured or Prometheus scrape job failing",
+        "Fluentd overwhelmed and dropping logs during high-volume periods",
+        "Metric name changed in a refactor but Grafana dashboard not updated"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Check what IP is being logged",
+          "command": "kubectl logs deploy/gateway | grep 'access' | tail -5 | jq '.client_ip'",
+          "note": "If you see 10.0.0.x consistently, it's the load balancer IP. The log format needs to use $http_x_real_ip or $http_x_forwarded_for."
+        },
+        {
+          "order": 2,
+          "action": "Check Prometheus scrape target for gateway",
+          "command": "kubectl port-forward deploy/prometheus 9090 & sleep 2 && curl -s localhost:9090/api/v1/targets | jq '.data.activeTargets[] | select(.labels.job==\"gateway\") | {health, lastScrape}'",
+          "note": "If health is 'down', Prometheus can't reach the gateway metrics endpoint. Check that /metrics is accessible from within the cluster."
+        },
+        {
+          "order": 3,
+          "action": "Check Fluentd buffer and drop rate",
+          "command": "kubectl logs -l app=fluentd | grep -i 'drop\\|buffer\\|retry' | tail -20",
+          "note": "Fluentd drops logs when the output buffer is full. During incidents, this can cause significant log gaps. Fluentd buffer was increased after INC-4021 but may still be insufficient under extreme load."
+        },
+        {
+          "order": 4,
+          "action": "Check Grafana dashboard queries against actual metric names",
+          "command": "kubectl exec deploy/gateway -- curl -s localhost:8080/metrics | grep -i 'request_duration'",
+          "note": "Compare metric names from /metrics endpoint against what's in the Grafana query. After a refactor in late May, some metrics were renamed and dashboards were not updated. This has happened more than once."
+        }
+      ],
+      "escalation": "Observability gaps during an incident are significant \u2014 escalate to Carol. Log loss during incidents is a post-mortem finding."
+    },
+    {
+      "issue_id": "GW-006",
+      "title": "ALB marking gateway instances as unhealthy",
+      "symptoms": [
+        "Instances being deregistered from ALB",
+        "Request errors increasing as capacity drops",
+        "ALB access logs showing health check failures",
+        "gateway pod is running fine but ALB shows it as unhealthy"
+      ],
+      "likely_causes": [
+        "/health endpoint is too slow (doing DB check or heavy computation) and exceeds ALB's 2-second timeout",
+        "Pod is genuinely overwhelmed and can't respond to health checks fast enough",
+        "ALB health check misconfigured (wrong port, wrong path)"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Check /health endpoint response time",
+          "command": "kubectl exec deploy/gateway -- curl -w '%{time_total}' -o /dev/null -s localhost:8080/health",
+          "expected": "Should be < 0.1 seconds. If > 1 second, the health endpoint is too heavy.",
+          "note": "If the health endpoint is doing a database query or checking upstream connectivity, it's doing too much. Health check should be shallow \u2014 just return 200 if the process is alive."
+        },
+        {
+          "order": 2,
+          "action": "Check ALB health check configuration",
+          "command": "aws elbv2 describe-target-groups --target-group-arns <arn> | jq '.TargetGroups[0] | {HealthCheckPath, HealthCheckPort, HealthCheckIntervalSeconds, HealthCheckTimeoutSeconds, UnhealthyThresholdCount}'",
+          "note": "HealthCheckTimeoutSeconds should be >= 5. If it's 2 and our health endpoint takes 3 seconds sometimes, we'll have false failures."
+        },
+        {
+          "order": 3,
+          "action": "Temporarily increase ALB timeout if needed",
+          "command": "aws elbv2 modify-target-group --target-group-arn <arn> --health-check-timeout-seconds 10",
+          "note": "This buys time. The real fix is making the /health endpoint return immediately. There's a config option for shallow health check \u2014 check gateway config docs or ask Carol."
+        },
+        {
+          "order": 4,
+          "action": "Switch /health to shallow check",
+          "command": "kubectl set env deployment/gateway HEALTH_CHECK_MODE=shallow",
+          "note": "If this env var exists, it disables the upstream connectivity checks in /health. Use /health/deep for internal monitoring only. This should have been done already \u2014 check why it wasn't."
+        }
+      ],
+      "escalation": "If instances are being rapidly deregistered and traffic is failing, this is P1. Page platform on-call."
+    }
+  ],
+  "general_health_checks": [
+    "kubectl get pods -l app=gateway \u2014 all pods Running, no restarts",
+    "curl -s https://api.example.com/health | jq .status \u2014 should be 'ok'",
+    "Check Cloudflare dashboard for error rate spikes",
+    "Check Datadog: 'Gateway Overview' \u2014 request rate, p99, 4xx/5xx rates",
+    "kubectl exec deploy/gateway -- curl -s localhost:8080/internal/circuit-breaker/status | jq . \u2014 all breakers CLOSED",
+    "Verify SSL cert expiry: echo | openssl s_client -connect api.example.com:443 2>/dev/null | openssl x509 -noout -dates"
+  ],
+  "known_gaps": [
+    "Rate limit whitelist via env var is a hack \u2014 no proper admin UI for overrides",
+    "CORS config is static \u2014 adding a new route requires a config change and pod restart",
+    "ALB health check timeout configuration is manual \u2014 not in Terraform yet (JIRA PLAT-201)",
+    "Log IP header config was fixed but may revert if gateway config is re-applied from stale configmap",
+    "Circuit breaker threshold was set correctly after INC-4021 but is not validated in CI \u2014 could drift again"
+  ],
+  "notes": "The gateway is the first thing customers blame when anything is wrong. Usually it's not the gateway \u2014 it's an upstream. Always check upstreams and Cloudflare before assuming gateway issues. The gateway itself is stateless and easy to restart, but do not restart without checking whether it would help first.",
+  "incident_examples": [
+    "INC-4021"
+  ]
+}

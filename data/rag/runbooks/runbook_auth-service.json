@@ -1,0 +1,267 @@
+{
+  "runbook_id": "RB-AUTH-001",
+  "service": "auth",
+  "version": "2.x",
+  "last_updated": "2024-05-30",
+  "last_updated_by": "alice@example.com",
+  "owner": {
+    "team": "Identity & Access",
+    "slack": "#identity-team",
+    "on_call": "pagerduty:identity-oncall"
+  },
+  "dependencies": {
+    "hard": [
+      "redis-cache",
+      "user-db"
+    ],
+    "soft": [],
+    "notes": "Auth is completely non-functional without Redis and user-db. If either is down, all downstream services (orders, gateway) will also fail. Check dependencies first before assuming auth-service itself is broken."
+  },
+  "common_issues": [
+    {
+      "issue_id": "AUTH-001",
+      "title": "Users being logged out / sessions invalidated unexpectedly",
+      "symptoms": [
+        "Support tickets about random logouts",
+        "401 errors spiking in gateway logs",
+        "auth-service logs show 'token not found in cache'"
+      ],
+      "likely_causes": [
+        "Redis cluster restart or failover flushed in-memory sessions",
+        "JWT signing secret was rotated without overlap window",
+        "Redis eviction policy kicked out session keys under memory pressure",
+        "auth-service pod restarted and in-memory state was lost (shouldn't happen \u2014 check if Redis is being used correctly)"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Check Redis connectivity",
+          "command": "kubectl exec -it deploy/auth-service -- redis-cli -h $REDIS_HOST ping",
+          "expected": "PONG",
+          "if_fails": "Redis is unreachable. See redis runbook RB-REDIS-001."
+        },
+        {
+          "order": 2,
+          "action": "Check Redis memory and eviction",
+          "command": "kubectl exec -it deploy/auth-service -- redis-cli -h $REDIS_HOST info memory",
+          "look_for": "used_memory_human, maxmemory_human, mem_fragmentation_ratio",
+          "note": "If used_memory is near maxmemory, eviction may be culprit. Check eviction policy with CONFIG GET maxmemory-policy."
+        },
+        {
+          "order": 3,
+          "action": "Check recent JWT secret rotation events",
+          "command": "kubectl get events -n production | grep secret",
+          "note": "Look for secret rotation in the last 24h. If rotation happened, verify both old and new keys are in JWKS endpoint."
+        },
+        {
+          "order": 4,
+          "action": "Verify JWKS endpoint returns both keys during rotation window",
+          "command": "curl -s https://auth.internal/auth/jwks | jq '.keys | length'",
+          "expected": "Should be >= 2 during rotation window, 1 otherwise",
+          "note": "If only 1 key is returned right after a rotation, tokens signed by old key will fail. This is the most common cause. Talk to whoever rotated the secret."
+        },
+        {
+          "order": 5,
+          "action": "If needed, manually force re-login for affected users",
+          "command": "N/A \u2014 there is no admin API for this yet. Users must log in again.",
+          "note": "TODO: add session invalidation endpoint. Known gap \u2014 see JIRA IAM-441."
+        }
+      ],
+      "escalation": "If issue persists after checking Redis and JWKS, escalate to #identity-team. Do not restart the auth-service pod without approval \u2014 it will invalidate more sessions."
+    },
+    {
+      "issue_id": "AUTH-002",
+      "title": "High 401 error rate (auth rejecting valid tokens)",
+      "symptoms": [
+        "401 spike visible in Datadog dashboard 'Auth Error Rate'",
+        "Logs contain 'JWT signature verification failed' or 'token expired'",
+        "Affects subset of users, not all"
+      ],
+      "likely_causes": [
+        "Secret rotation without overlap \u2014 see AUTH-001",
+        "Clock skew between auth-service and client (TOTP / token expiry edge cases)",
+        "Token TTL too short \u2014 check JWT_EXPIRY env var",
+        "Bug in upstream service not passing Authorization header correctly"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Sample failing tokens from logs and decode them",
+          "command": "kubectl logs deploy/auth-service | grep 'signature' | tail -20",
+          "note": "Grab a sample JWT from logs and decode at jwt.io to check iat, exp, and kid fields. Do NOT share production tokens in Slack."
+        },
+        {
+          "order": 2,
+          "action": "Check auth-service clock drift",
+          "command": "kubectl exec -it deploy/auth-service -- date -u",
+          "note": "Compare with your local UTC time. More than 30 seconds drift is a problem, especially for TOTP."
+        },
+        {
+          "order": 3,
+          "action": "Check the kid field in failing tokens against active keys",
+          "command": "curl -s https://auth.internal/auth/jwks | jq '[.keys[].kid]'",
+          "note": "If the kid in the failing token doesn't match any key in JWKS, the signing key has been rotated and old tokens are dead."
+        },
+        {
+          "order": 4,
+          "action": "Check JWT_EXPIRY and JWT_REFRESH_EXPIRY env vars",
+          "command": "kubectl get deploy/auth-service -o json | jq '.spec.template.spec.containers[0].env'",
+          "note": "Reasonable values: JWT_EXPIRY=900 (15 min), JWT_REFRESH_EXPIRY=86400 (24h). Very short values cause frequent logouts."
+        },
+        {
+          "order": 5,
+          "action": "Check if a specific upstream service is not forwarding auth headers",
+          "command": "Check gateway logs for requests with missing Authorization header. Usually this is a deploy misconfiguration.",
+          "note": "Sometimes the issue isn't auth at all \u2014 a service just forgot to pass the token through. Check with relevant team."
+        }
+      ],
+      "escalation": "If token kid mismatch is confirmed, this is a P1. Page the identity on-call immediately."
+    },
+    {
+      "issue_id": "AUTH-003",
+      "title": "Auth service pod OOMKilled / memory leak",
+      "symptoms": [
+        "Pod restarts visible in kubectl get pods",
+        "OOMKilled exit code in pod describe",
+        "Memory grows steadily over several hours then crashes"
+      ],
+      "likely_causes": [
+        "HTTP client connection pool not being closed after user-db or Redis calls",
+        "Large session payloads being cached in-process as well as in Redis",
+        "Known issue: see JIRA IAM-388 (not yet fixed as of this writing)"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Confirm OOMKill",
+          "command": "kubectl describe pod -l app=auth-service | grep -A5 'Last State'",
+          "expected": "Exit Code: 137 (OOMKill)"
+        },
+        {
+          "order": 2,
+          "action": "Check memory limit and current usage",
+          "command": "kubectl top pods -l app=auth-service",
+          "note": "Current memory limit is 512Mi. If consistently above 400Mi, consider bumping to 768Mi as a short-term workaround. File ticket for proper investigation."
+        },
+        {
+          "order": 3,
+          "action": "Take heap dump before restarting (if pod is still running)",
+          "command": "kubectl exec -it <pod-name> -- python -c \"import tracemalloc; tracemalloc.start()\" 2>/dev/null || echo 'Use py-spy or attach debugger'",
+          "note": "Honestly this is hard to do in production. If you can, get a heap snapshot. Otherwise just bump the memory limit and file a proper bug."
+        },
+        {
+          "order": 4,
+          "action": "Temporarily increase memory limit to stabilise",
+          "command": "kubectl set resources deployment/auth-service --limits=memory=768Mi",
+          "note": "This buys time. Do NOT do this repeatedly without investigating root cause."
+        },
+        {
+          "order": 5,
+          "action": "Check connection pool configuration",
+          "command": "kubectl exec deploy/auth-service -- env | grep -i pool",
+          "note": "Look for DB_POOL_SIZE and REDIS_POOL_SIZE. These should not be unbounded. If they are, set them. See config docs \u2014 or ask Alice."
+        }
+      ],
+      "escalation": "If pod is restarting more than once per hour, page the identity on-call. Auth instability cascades to all other services."
+    },
+    {
+      "issue_id": "AUTH-004",
+      "title": "Account lockout not working / brute force attempts",
+      "symptoms": [
+        "Spike in /auth/login requests from few IPs",
+        "Password reset volume unusually high",
+        "Lockout counter not incrementing despite repeated failures"
+      ],
+      "likely_causes": [
+        "Lockout state stored per-pod in-memory instead of Redis (known bug, may or may not be fixed in current version)",
+        "Rate limiting configured on global IP rather than per-user",
+        "WAF not blocking repeated IPs"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Check if lockout is hitting Redis or in-memory",
+          "command": "kubectl exec deploy/auth-service -- redis-cli -h $REDIS_HOST keys 'lockout:*' | head -20",
+          "note": "If you see lockout keys in Redis, locking is working. If empty during an active brute force, it's in-memory (broken)."
+        },
+        {
+          "order": 2,
+          "action": "Block attacking IPs at WAF level immediately",
+          "command": "Log into Cloudflare dashboard > Security > WAF > Custom Rules > Add IP block rule",
+          "note": "This is the fastest mitigation. Get the attacking IPs from gateway logs: kubectl logs deploy/gateway | grep 'POST /auth/login' | awk '{print $1}' | sort | uniq -c | sort -rn | head"
+        },
+        {
+          "order": 3,
+          "action": "Temporarily tighten rate limit on login endpoint",
+          "command": "Update gateway rate limit config for /auth/login \u2014 set to 5 req/min per IP. See gateway runbook for how to do this.",
+          "note": "Be careful not to lock out legitimate users. Coordinate with customer support."
+        },
+        {
+          "order": 4,
+          "action": "Check if AUTH_LOCKOUT_BACKEND env var is set to 'redis'",
+          "command": "kubectl get deploy/auth-service -o json | jq '.spec.template.spec.containers[0].env[] | select(.name==\"AUTH_LOCKOUT_BACKEND\")'",
+          "expected": "value should be 'redis', not 'memory'",
+          "note": "If missing or set to 'memory', this is the bug. Add the env var and redeploy. Check with Alice first."
+        }
+      ],
+      "escalation": "Active brute force against production is a security incident. Notify security-team@example.com and page identity on-call."
+    },
+    {
+      "issue_id": "AUTH-005",
+      "title": "TOTP / MFA codes being rejected",
+      "symptoms": [
+        "Users with MFA enabled cannot log in",
+        "Logs show 'TOTP validation failed' for codes that should be valid",
+        "Only affects MFA users, regular password login works"
+      ],
+      "likely_causes": [
+        "Auth-service host clock drift \u2014 NTP sync issue (most common)",
+        "TOTP window tolerance too narrow",
+        "VM was suspended and resumed without re-syncing clock"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Check clock drift on auth-service pods",
+          "command": "for pod in $(kubectl get pods -l app=auth-service -o name); do echo $pod; kubectl exec $pod -- date -u; done",
+          "note": "Compare each pod time against actual UTC. TOTP has a 30s window (1 step). Drift over 30s will reject valid codes. Drift over 90s will reject even with generous window."
+        },
+        {
+          "order": 2,
+          "action": "Force NTP sync if drifted",
+          "command": "kubectl exec -it <pod-name> -- chronyc -a makestep",
+          "note": "This only fixes the running pod. If it's a VM image issue, the drift will return after next pod restart. File infra ticket."
+        },
+        {
+          "order": 3,
+          "action": "Temporarily widen TOTP tolerance window",
+          "command": "kubectl set env deployment/auth-service TOTP_STEP_WINDOW=2",
+          "note": "Default is 1 (\u00b130s). Setting to 2 gives \u00b160s. Setting above 3 is not recommended for security reasons. This is a temporary fix."
+        },
+        {
+          "order": 4,
+          "action": "Verify fix by checking recent TOTP success rate",
+          "command": "kubectl logs deploy/auth-service | grep 'TOTP' | grep -c 'success\\|fail'",
+          "note": "Ratio should flip back to mostly successes. If not, the issue is something else \u2014 possibly a bug in the TOTP seed storage."
+        }
+      ],
+      "escalation": "If NTP sync doesn't resolve it and drift isn't the issue, escalate to #identity-team. Don't guess at TOTP seed issues."
+    }
+  ],
+  "general_health_checks": [
+    "kubectl get pods -l app=auth-service \u2014 all pods should be Running",
+    "curl -s https://auth.internal/health | jq .status \u2014 should return 'ok'",
+    "Check Datadog dashboard 'Auth Service Overview' for error rate, p99 latency, and pod restarts",
+    "kubectl logs deploy/auth-service --since=15m | grep -i error \u2014 should be near zero outside incidents"
+  ],
+  "known_gaps": [
+    "No admin API to manually invalidate sessions \u2014 users must re-login (JIRA IAM-441)",
+    "Lockout state may be per-pod if AUTH_LOCKOUT_BACKEND is not explicitly set \u2014 verify on each deploy",
+    "Heap dump procedure in prod is not well defined \u2014 see JIRA IAM-388",
+    "GDPR deletion job does not remove auth audit logs \u2014 compliance gap, escalate to Alice"
+  ],
+  "notes": "Auth is a shared critical dependency. Any change to auth-service in production must be coordinated with the gateway and orders teams. Do not rotate JWT secrets without notifying all teams first. There is a runbook for secret rotation specifically \u2014 find it on Confluence (search 'JWT rotation runbook' \u2014 it was last updated a while ago so some steps may be stale).",
+  "incident_examples": [
+    "INC-4019"
+  ]
+}

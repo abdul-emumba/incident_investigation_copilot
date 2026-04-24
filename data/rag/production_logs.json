@@ -1,0 +1,4479 @@
+[
+  {
+    "timestamp": "2024-06-14T08:00:00Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Password reset email sent",
+    "request_id": "req-ad2ad42d36a6"
+  },
+  {
+    "timestamp": "2024-06-14T08:01:57Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order status updated to SHIPPED",
+    "request_id": "req-65290273735a",
+    "env": "production",
+    "user_id": "usr_3677",
+    "duration_ms": 236.51
+  },
+  {
+    "timestamp": "2024-06-14T08:03:25Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "User login successful",
+    "request_id": "req-d184cc52503f",
+    "duration_ms": 344.04,
+    "trace_id": "trace-9c167cc43031e294",
+    "user_id": "usr_2876"
+  },
+  {
+    "timestamp": "2024-06-14T08:05:22Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "SSL termination successful",
+    "request_id": "req-2dfc98831bf9"
+  },
+  {
+    "timestamp": "2024-06-14T08:08:09Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Invoice generated",
+    "request_id": "req-c12e70d25de9"
+  },
+  {
+    "timestamp": "2024-06-14T08:09:39Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "High request volume detected: 4200 req/min",
+    "request_id": "req-b4d87bd4dc83"
+  },
+  {
+    "timestamp": "2024-06-14T08:10:53Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "Retry triggered for failed upstream request",
+    "request_id": "req-44a56bd2cc17"
+  },
+  {
+    "timestamp": "2024-06-14T08:10:51Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "User login successful",
+    "request_id": "req-0a09e6109925"
+  },
+  {
+    "timestamp": "2024-06-14T08:12:49Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order created successfully",
+    "request_id": "req-7c9bc34db8d3"
+  },
+  {
+    "timestamp": "2024-06-14T08:17:12Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request rate within limits",
+    "request_id": "req-ef6b199bde88"
+  },
+  {
+    "timestamp": "2024-06-14T08:20:51Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order confirmation email queued",
+    "request_id": "req-7e49cbb2e35d"
+  },
+  {
+    "timestamp": "2024-06-14T08:21:09Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Inventory check passed",
+    "request_id": "req-64e520ab8827",
+    "user_id": "usr_4878"
+  },
+  {
+    "timestamp": "2024-06-14T08:23:53Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order confirmation email queued",
+    "request_id": "req-77d71e6dadf7"
+  },
+  {
+    "timestamp": "2024-06-14T08:27:52Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Cart checkout initiated",
+    "req_id": "req-c9eb05f3203e"
+  },
+  {
+    "timestamp": "2024-06-14T08:27:36Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Password reset email sent",
+    "request_id": "req-5ee00ec09483"
+  },
+  {
+    "timestamp": "2024-06-14T08:25:30Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Password reset email sent",
+    "request_id": "req-186cb24f764d"
+  },
+  {
+    "timestamp": "2024-06-14T08:26:07Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Rate limit check passed",
+    "request_id": "req-00c58786d651"
+  },
+  {
+    "timestamp": "2024-06-14T08:31:49Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Rate limit check passed",
+    "request_id": "req-5272851ed462"
+  },
+  {
+    "timestamp": "2024-06-14T08:34:31Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order fulfillment triggered",
+    "request_id": "req-55b020d08357"
+  },
+  {
+    "timestamp": "2024-06-14T08:38:11Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request rate within limits",
+    "request_id": "req-681e10465789"
+  },
+  {
+    "timestamp": "2024-06-14T08:37:07Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request routed to auth-service",
+    "request_id": "req-1f8e90715a9d"
+  },
+  {
+    "timestamp": "2024-06-14T08:32:27Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Password reset email sent",
+    "request_id": "req-d56c35b79bae"
+  },
+  {
+    "timestamp": "2024-06-14T08:42:56Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Health check passed",
+    "request_id": "req-3b96f0f2f77b"
+  },
+  {
+    "timestamp": "2024-06-14T08:49:13Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Cache HIT for /api/v1/products",
+    "request_id": "req-173fd8e1634f"
+  },
+  {
+    "timestamp": "2024-06-14T08:43:54Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order status updated to SHIPPED",
+    "request_id": "req-2dd02d151ae0"
+  },
+  {
+    "timestamp": "2024-06-14T08:41:33Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Cart checkout initiated",
+    "request_id": "req-d5f595d5e363"
+  },
+  {
+    "timestamp": "2024-06-14T08:55:59Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment gateway responded in 120ms",
+    "request_id": "req-5c717311ca91"
+  },
+  {
+    "timestamp": "2024-06-14T08:55:17Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request routed to auth-service",
+    "request_id": "req-033608e303a9"
+  },
+  {
+    "timestamp": "2024-06-14T08:43:51Z",
+    "service": "payments",
+    "level": "info",
+    "message": "Payment gateway responded in 120ms",
+    "request_id": "req-3ed551486448"
+  },
+  {
+    "timestamp": "2024-06-14T08:51:43Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment gateway responded in 120ms",
+    "request_id": "req-eb55921ba0fe"
+  },
+  {
+    "timestamp": "2024-06-14T08:46:49Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Failed to connect to user-service: connection refused",
+    "request_id": "req-e907910fbc01"
+  },
+  {
+    "timestamp": "2024-06-14T09:00:11Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "TLS certificate expires in 14 days"
+  },
+  {
+    "timestamp": "2024-06-14T09:06:27Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Rate limit check passed",
+    "request_id": "req-d2815b93dc22",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T08:51:33Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Token validated",
+    "request_id": "req-111cd35cb67f"
+  },
+  {
+    "timestamp": "2024-06-14T09:08:51Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Retry sending order event to queue",
+    "request_id": "req-1f60879d070f"
+  },
+  {
+    "timestamp": "2024-06-14T09:03:32Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request routed to orders-service",
+    "request_id": "req-121504c19f54"
+  },
+  {
+    "timestamp": "2024-06-14T09:14:26Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "SSL handshake failed",
+    "request_id": "req-8950b47158a6"
+  },
+  {
+    "timestamp": "2024-06-14T09:02:44Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order status updated to SHIPPED",
+    "request_id": "req-3d8c1eea684c"
+  },
+  {
+    "timestamp": "2024-06-14T09:08:11Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Cannot connect to payments-service: no route to host",
+    "request_id": "req-1d339e94e345"
+  },
+  {
+    "timestamp": "2024-06-14T08:59:46Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "Circuit breaker HALF-OPEN, testing upstream",
+    "request_id": "req-664cb4a6afc8"
+  },
+  {
+    "timestamp": "2024-06-14T09:08:42Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request routed to orders-service",
+    "request_id": "req-899e761b6d44"
+  },
+  {
+    "timestamp": "2024-06-14T09:12:21Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order confirmation email queued"
+  },
+  {
+    "timestamp": "2024-06-14T09:19:22Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order status updated to SHIPPED",
+    "request_id": "req-4154baa9bd20"
+  },
+  {
+    "timestamp": "2024-06-14T09:15:08Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request routed to orders-service",
+    "request_id": "req-5d1df9f84ae9"
+  },
+  {
+    "timestamp": "2024-06-14T09:33:50Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Health check passed",
+    "request_id": "req-3b6dd7fc8a7c",
+    "trace_id": "trace-cec4aa6dfca52516",
+    "duration_ms": 300.9,
+    "user_id": "usr_9408"
+  },
+  {
+    "timestamp": "2024-06-14T09:26:48Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Rate limit check passed",
+    "duration_ms": 42.9,
+    "request_id": "req-fcc33503e206",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T09:33:53Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "User logout completed",
+    "request_id": "req-aeeb2c17f2be",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T09:17:35Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "TLS certificate expires in 14 days",
+    "request_id": "req-c5efa730c4a5",
+    "trace_id": "trace-d0ff563bac34e411",
+    "duration_ms": 115.63
+  },
+  {
+    "timestamp": "2024-06-14T09:33:42Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "SSL termination successful",
+    "request_id": "req-cefa5c05276b"
+  },
+  {
+    "timestamp": "2024-06-14T09:41:39Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Rate limit check passed",
+    "request_id": "req-baf6378b7d32",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T09:28:11Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order status updated to SHIPPED",
+    "request_id": "req-f577dcd364c6"
+  },
+  {
+    "timestamp": "2024-06-14T09:33:17Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request rate within limits",
+    "request_id": "req-ea2e1a7b7732"
+  },
+  {
+    "timestamp": "2024-06-14T09:34:02Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Password reset email sent",
+    "request_id": "req-f52cd112cfe0",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T09:31:27Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "User logout completed",
+    "request_id": "req-87f3cf95039e",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T09:34:33Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Stale cache detected for product catalog",
+    "req_id": "req-f6d9ce622524"
+  },
+  {
+    "timestamp": "2024-06-14T09:54:38Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Refund initiated for order",
+    "request_id": "req-04d1e512e617"
+  },
+  {
+    "timestamp": "2024-06-14T09:37:43Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "SSL termination successful",
+    "request_id": "req-7a1f852bbc12"
+  },
+  {
+    "timestamp": "2024-06-14T09:57:04Z",
+    "service": "auth",
+    "level": "WARN",
+    "message": "Multiple failed login attempts detected",
+    "request_id": "req-0bdfb5fca817",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T09:56:20Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request routed to auth-service",
+    "request_id": "req-06dbd43b7124"
+  },
+  {
+    "timestamp": "2024-06-14T09:51:07Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment processed successfully",
+    "req_id": "req-b22920149ea6"
+  },
+  {
+    "timestamp": "2024-06-14T09:43:47Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "User logout completed",
+    "request_id": "req-91cc59ad68fe",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T09:47:41Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Health check passed",
+    "request_id": "req-0019fc5f6eb0",
+    "user_id": "usr_1939",
+    "trace_id": "trace-09cebfe15c115830",
+    "host": "pod-gateway-4-b"
+  },
+  {
+    "timestamp": "2024-06-14T10:08:04Z",
+    "service": "gateway",
+    "level": "info",
+    "message": "Request routed to payments-service",
+    "request_id": "req-1f1bcffe9ac2"
+  },
+  {
+    "timestamp": "2024-06-14T10:12:52Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "OAuth2 token refreshed",
+    "request_id": "req-cbc59699452e",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T09:48:47Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment method tokenized",
+    "request_id": "req-6a2f623be952"
+  },
+  {
+    "timestamp": "2024-06-14T10:10:49Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "User logout completed",
+    "request_id": "req-4c908abccf5f",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T10:20:23Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Retry sending order event to queue",
+    "request_id": "req-433c38f8a7b9"
+  },
+  {
+    "timestamp": "2024-06-14T10:14:56Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Delivery estimate calculated",
+    "request_id": "req-ed6015c01fc7",
+    "user_id": "usr_3616"
+  },
+  {
+    "timestamp": "2024-06-14T10:04:35Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "SSL termination successful",
+    "request_id": "req-ae374eabcef0"
+  },
+  {
+    "timestamp": "2024-06-14T09:45:34Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Password reset email sent",
+    "request_id": "req-33cbf92fc30a",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T09:46:48Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Stale cache detected for product catalog",
+    "request_id": "req-95ef725e7f49"
+  },
+  {
+    "timestamp": "2024-06-14T10:14:07Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "OAuth2 token refreshed",
+    "request_id": "req-c437c4a9bafc",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T10:21:08Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Response returned in 45ms",
+    "request_id": "req-42fc8ff65453",
+    "duration_ms": 448.92
+  },
+  {
+    "timestamp": "2024-06-14T09:51:32Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Rate limit check passed",
+    "request_id": "req-eb5da8ddbf14",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T09:57:46Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Stripe webhook received",
+    "request_id": "req-b32588c8c890"
+  },
+  {
+    "timestamp": "2024-06-14T10:17:16Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Low inventory warning for SKU-4821",
+    "request_id": "req-28c2e6f545af"
+  },
+  {
+    "timestamp": "2024-06-14T10:08:56Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Subscription renewed",
+    "request_id": "req-918a01ef33ef"
+  },
+  {
+    "timestamp": "2024-06-14T10:07:37Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Session created for user",
+    "request_id": "req-8e3dcc530212",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T10:31:31Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment method tokenized",
+    "request_id": "req-3a223cf2bd3b",
+    "trace_id": "trace-26121a1650753afb",
+    "duration_ms": 467.95
+  },
+  {
+    "timestamp": "2024-06-14T10:20:02Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment method tokenized",
+    "request_id": "req-04424fc225da"
+  },
+  {
+    "timestamp": "2024-06-14T10:01:12Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order fulfillment triggered",
+    "request_id": "req-85b6068adba3"
+  },
+  {
+    "timestamp": "2024-06-14T10:39:28Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "User login successful",
+    "request_id": "req-e75f34fec4de",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T10:06:19Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Stripe webhook received",
+    "request_id": "req-50ec2dd7c1a0"
+  },
+  {
+    "timestamp": "2024-06-14T10:27:32Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment gateway responded in 120ms",
+    "request_id": "req-de437d65217f"
+  },
+  {
+    "timestamp": "2024-06-14T10:59:35Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Password reset email sent",
+    "request_id": "req-d82602fe21b9",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T10:34:06Z",
+    "service": "orders",
+    "level": "warn",
+    "message": "Retry sending order event to queue",
+    "request_id": "req-35edd3d29f61"
+  },
+  {
+    "timestamp": "2024-06-14T10:50:29Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request rate within limits",
+    "request_id": "req-aa794607d5a2"
+  },
+  {
+    "timestamp": "2024-06-14T10:32:08Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request routed to auth-service",
+    "trace_id": "trace-9a7468bbcd27e0f0"
+  },
+  {
+    "timestamp": "2024-06-14T10:17:29Z",
+    "level": "INFO",
+    "message": "Response returned in 45ms",
+    "request_id": "req-37b2ad781ab8"
+  },
+  {
+    "timestamp": "2024-06-14T11:06:51Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "User logout completed",
+    "duration_ms": 176.89,
+    "trace_id": "trace-8e337420565b5fbd"
+  },
+  {
+    "timestamp": "2024-06-14T10:53:02Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request rate within limits",
+    "request_id": "req-edbe06c0fb91"
+  },
+  {
+    "timestamp": "2024-06-14T11:02:41Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Session created for user",
+    "request_id": "req-367a06529d24"
+  },
+  {
+    "timestamp": "2024-06-14T10:28:23Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order confirmation email queued",
+    "request_id": "req-95131ca07071"
+  },
+  {
+    "timestamp": "2024-06-14T10:46:11Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Invoice generated",
+    "request_id": "req-513d070b3324"
+  },
+  {
+    "timestamp": "2024-06-14T10:55:28Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "Retry triggered for failed upstream request",
+    "request_id": "req-14d456b91028"
+  },
+  {
+    "timestamp": "2024-06-14T11:06:18Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "User logout completed",
+    "request_id": "req-4c33449f6bbd"
+  },
+  {
+    "timestamp": "2024-06-14T11:11:47Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Stripe webhook received",
+    "request_id": "req-e8b75ff62fb5"
+  },
+  {
+    "timestamp": "2024-06-14T10:54:45Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Token validated",
+    "user_id": "usr_4519",
+    "duration_ms": 110.83,
+    "env": "production",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T10:39:52Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Rate limit check passed",
+    "request_id": "req-7375e3bcbec5",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T11:02:12Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Cache HIT for /api/v1/products",
+    "request_id": "req-cec73791d024"
+  },
+  {
+    "timestamp": "2024-06-14T10:57:16Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Response returned in 45ms",
+    "request_id": "req-2c1562bb67f7",
+    "env": "production"
+  },
+  {
+    "timestamp": "2024-06-14T10:40:52Z",
+    "service": "payments",
+    "level": "WARN",
+    "message": "Payment retry attempt 2 of 3",
+    "request_id": "req-39287c60ae45"
+  },
+  {
+    "timestamp": "2024-06-14T10:42:01Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Subscription renewed",
+    "request_id": "req-0b6605581137"
+  },
+  {
+    "timestamp": "2024-06-14T11:32:40Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Rate limit check passed",
+    "req_id": "req-71fe2c7686a4"
+  },
+  {
+    "timestamp": "2024-06-14T11:34:00Z",
+    "level": "INFO",
+    "message": "Session created for user",
+    "request_id": "req-4c8e4ef8c0e5"
+  },
+  {
+    "timestamp": "2024-06-14T10:53:53Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "User login successful",
+    "request_id": "req-fb751db6bfe0",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T11:36:28Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment method tokenized",
+    "request_id": "req-4c047bb6309f",
+    "env": "production",
+    "trace_id": "trace-ceb2336574e225ea",
+    "duration_ms": 252.49
+  },
+  {
+    "timestamp": "2024-06-14T11:43:53Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Redis cache unavailable, falling back to DB",
+    "request_id": "req-96abeaa62420"
+  },
+  {
+    "timestamp": "2024-06-14T11:32:31Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Session created for user",
+    "request_id": "req-0474b557ab01"
+  },
+  {
+    "timestamp": "2024-06-14T11:27:44Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order fulfillment triggered",
+    "req_id": "req-265cc6e86a6e"
+  },
+  {
+    "timestamp": "2024-06-14T10:49:41Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "User logout completed",
+    "request_id": "req-4b5a7aaf8c9a",
+    "incident_id": "INC-4019"
+  },
+  {
+    "timestamp": "2024-06-14T11:45:55Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Health check passed",
+    "request_id": "req-8c699b1e7f2a"
+  },
+  {
+    "timestamp": "2024-06-14T11:02:59Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order status updated to SHIPPED",
+    "request_id": "req-6da0df789a47"
+  },
+  {
+    "timestamp": "2024-06-14T11:44:17Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Password reset email sent",
+    "request_id": "req-d7081532403a"
+  },
+  {
+    "timestamp": "2024-06-14T11:41:20Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment gateway responded in 120ms",
+    "request_id": "req-d9c6bb1fbf61"
+  },
+  {
+    "timestamp": "2024-06-14T11:28:01Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "OAuth2 token refreshed",
+    "request_id": "req-df24e9a015d1",
+    "trace_id": "trace-6ca79c7f443e7ab8",
+    "env": "production"
+  },
+  {
+    "timestamp": "2024-06-14T12:06:52Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "JWT signature verified",
+    "request_id": "req-ce8a3de02aec",
+    "env": "production",
+    "duration_ms": 24.36
+  },
+  {
+    "timestamp": "2024-06-14T11:55:18Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Stripe API returned 503: Service Unavailable",
+    "request_id": "req-939089cdf5f3"
+  },
+  {
+    "timestamp": "2024-06-14T11:52:20Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Stale cache detected for product catalog",
+    "request_id": "req-caa3a1f36fc6"
+  },
+  {
+    "timestamp": "2024-06-14T12:07:22Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Session created for user",
+    "request_id": "req-0becc9694c95"
+  },
+  {
+    "timestamp": "2024-06-14T12:14:18Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Cart checkout initiated",
+    "request_id": "req-53763cf634b1",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T11:28:12Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "User logout completed",
+    "host": "pod-auth-1-b",
+    "trace_id": "trace-02b1744cb7ef9bc0",
+    "user_id": "usr_2228",
+    "request_id": "req-1edbeba05981"
+  },
+  {
+    "timestamp": "2024-06-14T12:19:39Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Stripe webhook received",
+    "request_id": "req-5eeda37cf0e4",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T11:53:43Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Refund initiated for order",
+    "request_id": "req-14b2c8f1e1de",
+    "trace_id": "trace-a64bf29327702718",
+    "user_id": "usr_8803",
+    "env": "production"
+  },
+  {
+    "timestamp": "2024-06-14T12:24:28Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request routed to orders-service",
+    "request_id": "req-947e88b00fe1",
+    "trace_id": "trace-763200c36983be2f",
+    "user_id": "usr_7732",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T11:30:27Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment method tokenized",
+    "request_id": "req-88a7ee15b7c9"
+  },
+  {
+    "timestamp": "2024-06-14T11:46:13Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order confirmation email queued",
+    "request_id": "req-2fa6b50623c8"
+  },
+  {
+    "timestamp": "2024-06-14T11:27:29Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Rate limit check passed",
+    "request_id": "req-84d11912f7e7"
+  },
+  {
+    "timestamp": "2024-06-14T11:19:42Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Session created for user",
+    "request_id": "req-427941cc6d39"
+  },
+  {
+    "timestamp": "2024-06-14T12:14:47Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order confirmation email queued",
+    "request_id": "req-3a99723e41fe",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T11:43:10Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order fulfillment triggered",
+    "request_id": "req-760fca1e8053"
+  },
+  {
+    "timestamp": "2024-06-14T12:43:22Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment method tokenized",
+    "request_id": "req-778cbce66c4f",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T11:25:51Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Delivery estimate calculated",
+    "request_id": "req-1739b8270ea7"
+  },
+  {
+    "timestamp": "2024-06-14T11:31:40Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Invoice generated",
+    "request_id": "req-f9fa1d63c66c",
+    "user_id": "usr_6113",
+    "trace_id": "trace-0001a259862aa5d8"
+  },
+  {
+    "timestamp": "2024-06-14T12:34:35Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Partial fulfillment: 2 of 3 items available",
+    "request_id": "req-8fd980d5c53c",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T11:55:29Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "OAuth2 token refreshed",
+    "request_id": "req-ab1be5d4a0b2"
+  },
+  {
+    "timestamp": "2024-06-14T12:20:28Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment processed successfully",
+    "request_id": "req-679f0c2851da",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T11:33:37Z",
+    "service": "auth",
+    "level": "WARN",
+    "message": "Unusual login location detected",
+    "request_id": "req-d9e1bcae6f5b"
+  },
+  {
+    "timestamp": "2024-06-14T12:36:45Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Session created for user",
+    "request_id": "req-b7c09e07646b"
+  },
+  {
+    "timestamp": "2024-06-14T12:33:00Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Database connection timeout during auth check",
+    "request_id": "req-6378581181b4"
+  },
+  {
+    "timestamp": "2024-06-14T11:31:09Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Transaction rollback failed: deadlock detected",
+    "request_id": "req-144c783a8211"
+  },
+  {
+    "timestamp": "2024-06-14T11:47:02Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request rate within limits",
+    "request_id": "req-16171b14b02a"
+  },
+  {
+    "timestamp": "2024-06-14T11:41:36Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Stale cache detected for product catalog",
+    "request_id": "req-123145b6df79"
+  },
+  {
+    "timestamp": "2024-06-14T12:02:20Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order created successfully",
+    "request_id": "req-db7d7df6a44b",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:01:36Z",
+    "level": "INFO",
+    "message": "Request routed to orders-service",
+    "request_id": "req-8685c7b43f80"
+  },
+  {
+    "timestamp": "2024-06-14T12:36:22Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment gateway responded in 120ms",
+    "request_id": "req-e57584d3ef49",
+    "trace_id": "trace-4925fbf134057e76",
+    "user_id": "usr_9564",
+    "host": "pod-payments-4-a",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T12:52:01Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Transaction rollback failed: deadlock detected",
+    "request_id": "req-7b75752d66e4",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:11:17Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request rate within limits",
+    "request_id": "req-1d45f35d5d19",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T11:49:20Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment processed successfully",
+    "request_id": "req-f5ccfa83413f"
+  },
+  {
+    "timestamp": "2024-06-14T13:01:22Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order status updated to SHIPPED",
+    "request_id": "req-84fe931264bf",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T12:09:02Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Transaction rollback failed: deadlock detected",
+    "request_id": "req-a26221e4fbb9",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:04:20Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Password reset email sent",
+    "request_id": "req-596495c1fba6"
+  },
+  {
+    "timestamp": "2024-06-14T12:44:33Z",
+    "service": "payments",
+    "level": "WARN",
+    "message": "Duplicate payment request detected",
+    "request_id": "req-43635b8b6eb6",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T12:34:08Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "Upstream response time degraded: 1800ms",
+    "request_id": "req-9c4865f922ba",
+    "trace_id": "trace-329e58f042cd7dc6",
+    "duration_ms": 427.18,
+    "host": "pod-gateway-5-c",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T11:57:54Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Rate limit check passed",
+    "request_id": "req-d1f45c369cf6"
+  },
+  {
+    "timestamp": "2024-06-14T13:06:05Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request rate within limits",
+    "request_id": "req-2c377c2e8bba",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T12:46:44Z",
+    "service": "auth",
+    "level": "WARN",
+    "message": "Rate limit threshold approaching for IP",
+    "req_id": "req-16fd65e12024"
+  },
+  {
+    "timestamp": "2024-06-14T13:24:15Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Refund initiated for order",
+    "request_id": "req-1fd1bfad8f11",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T12:01:53Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Cart checkout initiated",
+    "request_id": "req-038be9d07f68",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T11:59:11Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Refund initiated for order",
+    "request_id": "req-bd6511dc7aa3",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T12:17:11Z",
+    "service": "auth",
+    "level": "WARN",
+    "message": "Multiple failed login attempts detected",
+    "request_id": "req-a54eb197c736"
+  },
+  {
+    "timestamp": "2024-06-14T13:29:33Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Invoice generated",
+    "request_id": "req-0bd720cb13a6",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T12:57:21Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Session created for user",
+    "request_id": "req-0750916f6873",
+    "duration_ms": 187.51,
+    "env": "production",
+    "host": "pod-auth-2-c"
+  },
+  {
+    "timestamp": "2024-06-14T12:50:31Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order fulfillment triggered",
+    "request_id": "req-19360c7bd69b",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:01:34Z",
+    "service": "orders",
+    "level": "warn",
+    "message": "Stale cache detected for product catalog",
+    "request_id": "req-c80bdba09325",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:13:13Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Stripe webhook received",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:35:45Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment method tokenized",
+    "trace_id": "trace-6f0325bbe78f9e3d",
+    "env": "production",
+    "duration_ms": 291.7,
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T12:43:15Z",
+    "service": "auth",
+    "level": "WARN",
+    "message": "Token expiry approaching",
+    "request_id": "req-669113abb494"
+  },
+  {
+    "timestamp": "2024-06-14T12:37:45Z",
+    "level": "INFO",
+    "message": "Inventory check passed",
+    "request_id": "req-7b81f8e9481d"
+  },
+  {
+    "timestamp": "2024-06-14T13:36:21Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order status updated to SHIPPED",
+    "request_id": "req-91a797ff883e",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T12:35:43Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Delivery estimate calculated",
+    "request_id": "req-04c9515ad3f3",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T12:46:06Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order confirmation email queued",
+    "request_id": "req-f0139475627d",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:49:44Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment processed successfully",
+    "request_id": "req-6e2305a7141f",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:01:07Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order confirmation email queued",
+    "request_id": "req-c6f41580e4cc",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:54:41Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Cart checkout initiated",
+    "request_id": "req-ee4e17f390ca",
+    "user_id": "usr_7387",
+    "env": "production",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:23:57Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment method tokenized",
+    "request_id": "req-2c9231580428",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:20:30Z",
+    "service": "payments",
+    "level": "WARN",
+    "message": "Duplicate payment request detected",
+    "request_id": "req-ce2516e66362",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T12:47:45Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request routed to orders-service",
+    "request_id": "req-2635e42edbcb",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:21:02Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Response returned in 45ms",
+    "request_id": "req-e55dc1fe6916",
+    "host": "pod-gateway-1-c",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:14:56Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Order processing time exceeds SLA threshold",
+    "request_id": "req-d87db4fceb6a",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T12:35:02Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request routed to orders-service",
+    "request_id": "req-94a456cd9666",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:24:26Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Stripe webhook received",
+    "request_id": "req-5dcf5e782bce",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:04:57Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Delivery estimate calculated",
+    "request_id": "req-d54202123f4b",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:38:19Z",
+    "service": "auth",
+    "level": "info",
+    "message": "Session created for user",
+    "request_id": "req-0133ad5a8487",
+    "user_id": "usr_4784",
+    "env": "production",
+    "duration_ms": 270.51
+  },
+  {
+    "timestamp": "2024-06-14T14:07:54Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request rate within limits",
+    "request_id": "req-242388297047",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:17:23Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Refund initiated for order",
+    "req_id": "req-aaeac8a9df69",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:20:58Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Stripe webhook received",
+    "request_id": "req-b08556c75383",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:17:56Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request routed to auth-service",
+    "request_id": "req-657844a2f3f5",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:01:12Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Failed to route request: no healthy upstreams",
+    "request_id": "req-152e00561d03",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:54:12Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment gateway responded in 120ms",
+    "request_id": "req-ff3ae9391ca7",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:10:17Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order fulfillment triggered",
+    "host": "pod-orders-1-b",
+    "user_id": "usr_6901",
+    "env": "production",
+    "request_id": "req-7a5b1ad2d2e1",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:51:15Z",
+    "service": "auth",
+    "level": "WARN",
+    "message": "Unusual login location detected",
+    "request_id": "req-ad2f0cff4d92"
+  },
+  {
+    "timestamp": "2024-06-14T14:31:55Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Low inventory warning for SKU-4821",
+    "request_id": "req-52474030e31c",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:13:27Z",
+    "service": "payments",
+    "level": "WARN",
+    "message": "Payment declined by issuer, retrying",
+    "request_id": "req-43cb25c7caf9",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:55:18Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Delivery estimate calculated",
+    "request_id": "req-63e3dd4f5123",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:25:03Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order confirmation email queued",
+    "request_id": "req-e0596b8971f1",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:26:14Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Cache HIT for /api/v1/products",
+    "request_id": "req-5ab188d29a06",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:01:55Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Stripe webhook received",
+    "request_id": "req-5814b2c3820f",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:00:17Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Health check passed",
+    "request_id": "req-5b54b5593c2a",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T13:21:10Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order fulfillment triggered",
+    "request_id": "req-59ec89a6a116",
+    "duration_ms": 428.38,
+    "trace_id": "trace-31d4113a8e47dcaf",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:00:00Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Upstream payments-service unreachable",
+    "request_id": "req-138bef0b02ec",
+    "error_code": "ERR_5XX",
+    "retry_count": 2,
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:00:17Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Invoice generated",
+    "request_id": "req-36507e338315",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:00:34Z",
+    "service": "payments",
+    "level": "WARN",
+    "message": "High latency from Stripe API: 2400ms",
+    "request_id": "req-7690f24ade6e",
+    "host": "pod-payments-5-e",
+    "trace_id": "trace-2fa4f53acff48641",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:00:57Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order fulfillment triggered",
+    "request_id": "req-f9ea94730376",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:01:14Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Retry sending order event to queue",
+    "request_id": "req-eb6681a12d85",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:01:28Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Delivery estimate calculated",
+    "request_id": "req-07bea77f8b65",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:01:30Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order status updated to SHIPPED",
+    "request_id": "req-cea32dffc5ed",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:01:47Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order created successfully",
+    "request_id": "req-c33753e75429",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:02:30Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request routed to payments-service",
+    "request_id": "req-1dd738054681",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:02:16Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Response returned in 45ms",
+    "request_id": "req-76f462003290",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:02:47Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "High request volume detected: 4200 req/min",
+    "request_id": "req-57b3fb1e0343",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:03:30Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order fulfillment triggered",
+    "host": "pod-orders-2-c",
+    "duration_ms": 434.18,
+    "env": "production",
+    "request_id": "req-641e31d8e648",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:03:22Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Health check passed",
+    "request_id": "req-c94cba5109b4",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:03:42Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "SSL handshake failed",
+    "request_id": "req-fc337d202f93",
+    "error_code": "ERR_5XX",
+    "retry_count": 1,
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:04:10Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "OAuth2 token refreshed",
+    "request_id": "req-9b46eaf61215"
+  },
+  {
+    "timestamp": "2024-06-14T14:04:16Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order created successfully",
+    "request_id": "req-334e5a1cb6e3",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:04:22Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order created successfully",
+    "request_id": "req-6dc2a9937760",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:04:47Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "Retry triggered for failed upstream request",
+    "request_id": "req-c0e562051c7a",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:05:53Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request rate within limits",
+    "req_id": "req-087feb406553",
+    "trace_id": "trace-df5c247abb1dedab",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:06:06Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Subscription renewed",
+    "request_id": "req-1848e086fcb6",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:05:38Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Cannot connect to payments-service: no route to host",
+    "request_id": "req-c1c6d485bb3e",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 1,
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:06:49Z",
+    "service": "payments",
+    "level": "WARN",
+    "message": "Payment retry attempt 2 of 3",
+    "request_id": "req-29107662a971",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:06:32Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Inventory check passed",
+    "req_id": "req-b164ca0d584f",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:05:54Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "Retry triggered for failed upstream request",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:07:35Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Delivery estimate calculated",
+    "request_id": "req-0d429725db51",
+    "host": "pod-orders-2-c",
+    "duration_ms": 40.92,
+    "trace_id": "trace-a83d4a487b37b7b3",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:08:16Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Subscription renewed",
+    "request_id": "req-cfcd3c640c8b",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:06:30Z",
+    "service": "auth",
+    "level": "WARN",
+    "message": "Rate limit threshold approaching for IP",
+    "request_id": "req-42093ac1946f"
+  },
+  {
+    "timestamp": "2024-06-14T14:06:45Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Invoice generated",
+    "request_id": "req-4dabc781c8af",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:07:29Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Delivery estimate calculated",
+    "request_id": "req-a2bd13058dbd",
+    "trace_id": "trace-d0d8b3a0d3cf1dfe",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:09:18Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request rate within limits",
+    "request_id": "req-32d027d11a07",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:08:07Z",
+    "service": "gateway",
+    "level": "warn",
+    "message": "TLS certificate expires in 14 days",
+    "req_id": "req-520065b1b650",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:08:18Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order fulfillment triggered",
+    "request_id": "req-391c5c745a40",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:09:50Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "OAuth2 token refreshed",
+    "request_id": "req-f828fa01af45"
+  },
+  {
+    "timestamp": "2024-06-14T14:09:47Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment gateway responded in 120ms",
+    "req_id": "req-d5dfe4ebf12b",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:10:30Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Inventory check passed",
+    "request_id": "req-1b8e9be51724",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:09:36Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Stripe webhook received",
+    "request_id": "req-940f4f3571ec",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:11:22Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Payment processing failed: timeout after 30s",
+    "request_id": "req-c85e9754cdaf",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 2,
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:10:03Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment method tokenized",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:10:00Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order created successfully",
+    "request_id": "req-59f51e993c38",
+    "trace_id": "trace-1558c2e071ba43d8",
+    "host": "pod-orders-1-c",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:10:22Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Stale cache detected for product catalog",
+    "request_id": "req-fef97b5196e6",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:13:14Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Gateway timeout after 30s waiting for orders-service",
+    "user_id": "usr_5713",
+    "trace_id": "trace-c02a77e21aae9714",
+    "host": "pod-gateway-4-e",
+    "error_code": "ERR_5XX",
+    "retry_count": 2,
+    "request_id": "req-9b96b080256c",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:13:38Z",
+    "service": "auth",
+    "level": "WARN",
+    "message": "Token expiry approaching",
+    "request_id": "req-b237caf8cce0"
+  },
+  {
+    "timestamp": "2024-06-14T14:13:41Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Inventory check passed",
+    "request_id": "req-62774e45b37a",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:12:36Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Order DB write failed: disk quota exceeded",
+    "request_id": "req-8372226b1b78",
+    "trace_id": "trace-1ef7836f5a7d7cdc",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 2,
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:13:46Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "User login successful",
+    "request_id": "req-4668d8cfb799",
+    "user_id": "usr_4506",
+    "host": "pod-auth-4-b",
+    "duration_ms": 461.03
+  },
+  {
+    "timestamp": "2024-06-14T14:14:50Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Failed to publish payment event to Kafka",
+    "request_id": "req-21fe5b101547",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 3,
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:13:03Z",
+    "service": "gateway",
+    "level": "info",
+    "message": "Request routed to payments-service",
+    "request_id": "req-4024b05958cf",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:12:31Z",
+    "service": "payments",
+    "level": "WARN",
+    "message": "Duplicate payment request detected",
+    "request_id": "req-e6401301e6be",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:13:59Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment method tokenized",
+    "request_id": "req-c3bb666d41ef",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:15:45Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Token validation failed: signature mismatch",
+    "request_id": "req-ac468c0e0631",
+    "duration_ms": 384.95,
+    "env": "production",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 2
+  },
+  {
+    "timestamp": "2024-06-14T14:12:44Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment method tokenized",
+    "request_id": "req-2a4020a1af3f",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:13:09Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Health check passed",
+    "request_id": "req-017672ea90d5",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:13:23Z",
+    "service": "auth",
+    "level": "WARN",
+    "message": "Token expiry approaching",
+    "request_id": "req-e602d0316ca5"
+  },
+  {
+    "timestamp": "2024-06-14T14:17:03Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Response returned in 45ms",
+    "request_id": "req-5ad1d5670784",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:17:18Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Critical: order-service pod OOMKilled",
+    "request_id": "req-6e1908dea6e2",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 3,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:17:20Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Token validation failed: signature mismatch",
+    "request_id": "req-8077d32b4362",
+    "duration_ms": 250.28,
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 2,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T14:15:08Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Order event publish failed: Kafka broker unreachable",
+    "request_id": "req-74956d2e9f6b",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 2,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:14:17Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Circuit breaker OPEN: payments-service",
+    "request_id": "req-1f646eb6158f",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 1,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:17:52Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "User logout completed",
+    "request_id": "req-c04fbc297674",
+    "user_id": "usr_4747",
+    "trace_id": "trace-6f15e476d0c898d9",
+    "env": "production"
+  },
+  {
+    "timestamp": "2024-06-14T14:17:47Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Inventory check passed",
+    "env": "production",
+    "duration_ms": 346.56,
+    "trace_id": "trace-75dc6a9d1d34b179",
+    "request_id": "req-71dd97e500dd",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:15:28Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Password reset email sent",
+    "request_id": "req-6a2094c8acc1"
+  },
+  {
+    "timestamp": "2024-06-14T14:16:58Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request rate within limits",
+    "request_id": "req-9ef08e7820c5",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:18:02Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Transaction rollback failed: deadlock detected",
+    "request_id": "req-c1b811921b5c",
+    "error_code": "ERR_5XX",
+    "retry_count": 1,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:20:18Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Transaction rollback failed: deadlock detected",
+    "req_id": "req-230b648a4403",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 2,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:16:09Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "SSL handshake failed",
+    "request_id": "req-319986c76e65",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 1,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:17:37Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Payment service cannot reach orders-service",
+    "request_id": "req-9ce65883fbfd",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 2,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:17:58Z",
+    "service": "gateway",
+    "level": "info",
+    "message": "Cache HIT for /api/v1/products",
+    "request_id": "req-1d4c142e081c",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:17:27Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Downstream dependency auth-service returning 500",
+    "request_id": "req-0157f36a5167",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 1,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:21:58Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order fulfillment triggered",
+    "request_id": "req-cc537b2abc15",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:22:14Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request rate within limits",
+    "request_id": "req-d75da1cd772b",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:21:59Z",
+    "service": "payments",
+    "level": "WARN",
+    "message": "Payment retry attempt 2 of 3",
+    "request_id": "req-1de70fb70013",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:22:04Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order confirmation email queued",
+    "request_id": "req-520fb80119f5",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:18:07Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Order DB write failed: disk quota exceeded",
+    "request_id": "req-74ce59745667",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 2,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:22:48Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Health check passed",
+    "request_id": "req-29fe4c726fbd",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:21:57Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request rate within limits",
+    "request_id": "req-73ba96969637",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:19:23Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Database connection timeout during auth check",
+    "request_id": "req-25b4fc7106d6",
+    "error_code": "ERR_5XX",
+    "retry_count": 2,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T14:20:05Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Partial fulfillment: 2 of 3 items available",
+    "request_id": "req-600176faca69",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:19:47Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Order processing time exceeds SLA threshold",
+    "request_id": "req-9968908575ff",
+    "duration_ms": 173.9,
+    "user_id": "usr_9805",
+    "trace_id": "trace-783c048331f6468b",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:22:49Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Critical: order-service pod OOMKilled",
+    "request_id": "req-59baf4fa4be5",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 2,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:25:03Z",
+    "service": "payments",
+    "level": "WARN",
+    "message": "Payment declined by issuer, retrying",
+    "request_id": "req-b2d61c00b0cd",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:20:31Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Failed to route request: no healthy upstreams",
+    "request_id": "req-950c21192251",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 3,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:26:37Z",
+    "service": "orders",
+    "level": "error",
+    "message": "Failed to reserve inventory: service timeout",
+    "request_id": "req-f9e16c3a88d7",
+    "env": "production",
+    "host": "pod-orders-3-a",
+    "user_id": "usr_8357",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 2,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:24:11Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "SSL handshake failed",
+    "request_id": "req-44b9269262a4",
+    "env": "production",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 2,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:22:00Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "JWT signature verified",
+    "request_id": "req-bc8e98ad3d22"
+  },
+  {
+    "timestamp": "2024-06-14T14:27:38Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order confirmation email queued",
+    "request_id": "req-23b64c31726c",
+    "duration_ms": 499.63,
+    "trace_id": "trace-2cd992a7934ca8ee",
+    "host": "pod-orders-2-c",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:26:29Z",
+    "service": "auth",
+    "level": "WARN",
+    "message": "Unusual login location detected",
+    "request_id": "req-2689495e4fd9"
+  },
+  {
+    "timestamp": "2024-06-14T14:23:51Z",
+    "level": "ERROR",
+    "message": "Stripe API returned 503: Service Unavailable",
+    "request_id": "req-10b842871b90",
+    "duration_ms": 124.79,
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 3,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T14:26:08Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "JWT signature verified",
+    "request_id": "req-43c35c8785e7"
+  },
+  {
+    "timestamp": "2024-06-14T14:22:10Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Order DB write failed: disk quota exceeded",
+    "error_code": "ERR_5XX",
+    "retry_count": 2,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:24:16Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Failed to route request: no healthy upstreams",
+    "request_id": "req-adb3a590bdce",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 1,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:25:44Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Failed to connect to user-service: connection refused",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 1,
+    "dependency": "payments-service",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-72db31b1b980"
+  },
+  {
+    "timestamp": "2024-06-14T14:29:43Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Cache HIT for /api/v1/products",
+    "request_id": "req-6d34a0683f96",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:26:28Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Failed to reserve inventory: service timeout",
+    "request_id": "req-4e051d6ae096",
+    "user_id": "usr_4282",
+    "host": "pod-orders-2-d",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 3,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:25:48Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Order DB write failed: disk quota exceeded",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 1,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-451d1676007a",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:23:44Z",
+    "service": "auth",
+    "level": "info",
+    "message": "Rate limit check passed",
+    "request_id": "req-c85f2ca78a40"
+  },
+  {
+    "timestamp": "2024-06-14T14:29:59Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Database connection timeout during auth check",
+    "req_id": "req-988bc86d0f39",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T14:28:41Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Cannot connect to payments-service: no route to host",
+    "request_id": "req-15663c086f2c",
+    "error_code": "ERR_5XX",
+    "retry_count": 3,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:28:09Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Failed to route request: no healthy upstreams",
+    "request_id": "req-70e838f2cb1f",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 2,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:29:34Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Gateway timeout after 30s waiting for orders-service",
+    "request_id": "req-4fb72468bbad",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 3,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:26:48Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Stale cache detected for product catalog",
+    "request_id": "req-e760034126c0",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:30:00Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Downstream dependency auth-service returning 500",
+    "request_id": "req-709017ac7e51",
+    "error_code": "ERR_5XX",
+    "retry_count": 2,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:30:13Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Critical: order-service pod OOMKilled",
+    "request_id": "req-9f43379d02db",
+    "host": "pod-orders-1-a",
+    "user_id": "usr_1941",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 1,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:30:26Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Order event publish failed: Kafka broker unreachable",
+    "request_id": "req-9324eacb0628",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 2,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:30:43Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Partial fulfillment: 2 of 3 items available",
+    "request_id": "req-0c30045b5a8c",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:31:08Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Failed to reserve inventory: service timeout",
+    "request_id": "req-9bb6f1e21b55",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 2,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:31:05Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment gateway responded in 120ms",
+    "request_id": "req-2d9c77cabe20",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:31:03Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Upstream payments-service unreachable",
+    "request_id": "req-a4244b513a0d",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 2,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:31:21Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "User login successful",
+    "request_id": "req-7cc0bf2dd29b"
+  },
+  {
+    "timestamp": "2024-06-14T14:31:33Z",
+    "service": "payments",
+    "level": "WARN",
+    "message": "Duplicate payment request detected",
+    "request_id": "req-3a806195683e",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:31:36Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Failed to publish payment event to Kafka",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 2,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-f71f3304d39d",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:32:39Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Upstream auth-service returned 500",
+    "request_id": "req-5918cf6a6076",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 3,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:32:20Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment method tokenized",
+    "request_id": "req-c4b19a99cc26",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:32:19Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Order DB write failed: disk quota exceeded",
+    "request_id": "req-14e6b90c1256",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 1,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:32:54Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Redis cache unavailable, falling back to DB",
+    "request_id": "req-03bc1cda2518",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 3,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T14:33:03Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Stripe API returned 503: Service Unavailable",
+    "request_id": "req-0e852155485d",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 2,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:33:54Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Database connection timeout during auth check",
+    "req_id": "req-7a6480382d07",
+    "error_code": "ERR_5XX",
+    "retry_count": 3,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T14:33:44Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Downstream dependency auth-service returning 500",
+    "request_id": "req-6fc580e97ab5",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 3,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:34:29Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Transaction rollback failed: deadlock detected",
+    "request_id": "req-d56d9718b4bb",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 2,
+    "dependency": "payments-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:33:49Z",
+    "level": "ERROR",
+    "message": "Critical: order-service pod OOMKilled",
+    "request_id": "req-ad6029e163f4",
+    "error_code": "ERR_5XX",
+    "retry_count": 2,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T14:35:33Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Failed to reserve inventory: service timeout",
+    "request_id": "req-78ab296d1472",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:35:53Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request rate within limits",
+    "request_id": "req-56f99145b035",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:35:56Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "SSL handshake failed",
+    "request_id": "req-7c1b4dd64b05",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 2,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:35:54Z",
+    "service": "payments",
+    "level": "WARN",
+    "message": "Duplicate payment request detected",
+    "request_id": "req-6fd38bf85546",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:36:47Z",
+    "service": "payments",
+    "level": "WARN",
+    "message": "Payment declined by issuer, retrying",
+    "request_id": "req-bf793aa279ff",
+    "trace_id": "trace-4623d021c97113c4",
+    "duration_ms": 303.45,
+    "host": "pod-payments-3-c",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:35:50Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Retry sending order event to queue",
+    "request_id": "req-565a7c109479",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:35:59Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Database write failed: connection pool exhausted",
+    "request_id": "req-70c636751cc5",
+    "error_code": "ERR_5XX",
+    "retry_count": 1,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:35:05Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Failed to reserve inventory: service timeout",
+    "request_id": "req-94caf19b2f0c",
+    "host": "pod-orders-1-a",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:36:33Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Low inventory warning for SKU-4821",
+    "request_id": "req-bb86c7a22612",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:36:50Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Failed to reserve inventory: service timeout",
+    "request_id": "req-a1fa34be6bbe",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 2,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:34:50Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Circuit breaker OPEN for Stripe dependency",
+    "request_id": "req-893254aac7dc",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 3,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:36:06Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Downstream dependency auth-service returning 500",
+    "request_id": "req-052b595df473",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 1,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:39:16Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Invoice generated",
+    "request_id": "req-b86c6eb9d96b",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:37:34Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Gateway timeout after 30s waiting for orders-service",
+    "request_id": "req-af6c6462803e",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 3,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:36:07Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Retry sending order event to queue",
+    "req_id": "req-62e0987e790f",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:36:04Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Token validation failed: signature mismatch",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 3,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-902512985038"
+  },
+  {
+    "timestamp": "2024-06-14T14:39:06Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Stale cache detected for product catalog",
+    "request_id": "req-8cfcfa1c9f47",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:40:05Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "High request volume detected: 4200 req/min",
+    "request_id": "req-847a131f3ffa",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:40:33Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Stripe API returned 503: Service Unavailable",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 2,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-a6e1ff82e941",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:38:31Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Payment processing failed: timeout after 30s",
+    "request_id": "req-4999b114c660",
+    "env": "production",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:40:29Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Upstream payments-service unreachable",
+    "request_id": "req-3d74cb0edcad",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 2,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:39:27Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Order event publish failed: Kafka broker unreachable",
+    "request_id": "req-ef0faaa5d18b",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 2,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:38:49Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment processed successfully",
+    "request_id": "req-33de3bb43a98",
+    "host": "pod-payments-4-d",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:37:22Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Circuit breaker OPEN for Stripe dependency",
+    "req_id": "req-a9d7122b1220",
+    "error_code": "ERR_5XX",
+    "retry_count": 1,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:37:11Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Failed to reserve inventory: service timeout",
+    "request_id": "req-d52cadac88e6",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:38:00Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Cannot connect to payments-service: no route to host",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 3,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-e94af5eea479",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:41:37Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "TLS certificate expires in 14 days",
+    "request_id": "req-6cd5f8bcc7d1",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:42:08Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order status updated to SHIPPED",
+    "request_id": "req-1405c6ab0ba7",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:43:41Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Redis cache unavailable, falling back to DB",
+    "request_id": "req-5f5d131cfca5",
+    "duration_ms": 250.99,
+    "trace_id": "trace-4b7be27c8a0c4d80",
+    "error_code": "ERR_5XX",
+    "retry_count": 1,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T14:43:54Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Failed to route request: no healthy upstreams",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 3,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-43e8e1fe8667",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:40:15Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Payment service cannot reach orders-service",
+    "request_id": "req-fc6f11934c98",
+    "duration_ms": 283.6,
+    "error_code": "ERR_5XX",
+    "retry_count": 1,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:41:24Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Gateway timeout after 30s waiting for orders-service",
+    "request_id": "req-0a9f54b77afb",
+    "host": "pod-gateway-2-c",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 3,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:42:16Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Failed to route request: no healthy upstreams",
+    "request_id": "req-950a0793b514",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 2,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:39:02Z",
+    "service": "payments",
+    "level": "error",
+    "message": "Database write failed: connection pool exhausted",
+    "request_id": "req-2b36e24ae933",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 1,
+    "dependency": "payments-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:41:03Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request rate within limits",
+    "request_id": "req-c4f8226a617a",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:40:09Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order fulfillment triggered",
+    "request_id": "req-c92548f6ff70",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:45:41Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Upstream payments-service unreachable",
+    "request_id": "req-a6e76811ceb3",
+    "error_code": "ERR_5XX",
+    "retry_count": 1,
+    "dependency": "payments-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:40:40Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "High request volume detected: 4200 req/min",
+    "req_id": "req-1fe034123fb0",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:42:55Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Upstream auth-service returned 500",
+    "request_id": "req-7ec0b01b1481",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 1,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:40:30Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Gateway timeout after 30s waiting for orders-service",
+    "request_id": "req-1eac14fa308f",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 2,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:40:15Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "SSL handshake failed",
+    "request_id": "req-710d8ca809ed",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 2,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:44:17Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Gateway timeout after 30s waiting for orders-service",
+    "request_id": "req-b43f9955fc1c",
+    "error_code": "ERR_5XX",
+    "retry_count": 1,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:43:28Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order confirmation email queued",
+    "request_id": "req-5d563ddd49ff",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:42:49Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Stripe API returned 503: Service Unavailable",
+    "request_id": "req-26bc0c320750",
+    "error_code": "ERR_5XX",
+    "retry_count": 3,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:48:22Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request routed to payments-service",
+    "request_id": "req-68b13ae0d10d",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:44:40Z",
+    "service": "auth",
+    "level": "error",
+    "message": "JWT decode error: malformed token",
+    "request_id": "req-de8e760d80ac",
+    "error_code": "ERR_5XX",
+    "retry_count": 3,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T14:46:01Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Failed to publish payment event to Kafka",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 3,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-3c49c820b624",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:48:22Z",
+    "service": "payments",
+    "level": "error",
+    "message": "Stripe API returned 503: Service Unavailable",
+    "request_id": "req-8b05c14fd8e2",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 3,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:48:02Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Order processing time exceeds SLA threshold",
+    "request_id": "req-be8b1f701ab9",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:42:01Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Cannot connect to payments-service: no route to host",
+    "request_id": "req-47bff93a2eb3",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 3,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:48:30Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Payment processing failed: timeout after 30s",
+    "host": "pod-payments-2-e",
+    "env": "production",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 3,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:44:12Z",
+    "service": "payments",
+    "level": "WARN",
+    "message": "Duplicate payment request detected",
+    "request_id": "req-a23e749facf6",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:45:13Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Redis cache unavailable, falling back to DB",
+    "request_id": "req-3fdbedd25964",
+    "duration_ms": 325.4,
+    "user_id": "usr_1292",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 1,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T14:50:48Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Token validation failed: signature mismatch",
+    "request_id": "req-b61ae914879b",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1,
+    "dependency": "payments-service",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T14:43:31Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "SSL handshake failed",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-987e6b9bf36e",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:46:52Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Auth service downstream dependency unreachable",
+    "request_id": "req-349f5deeb274",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 3,
+    "dependency": "payments-service",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T14:43:15Z",
+    "service": "payments",
+    "level": "WARN",
+    "message": "High latency from Stripe API: 2400ms",
+    "request_id": "req-2f9547bc8013",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:44:43Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Stripe webhook received",
+    "request_id": "req-5d8ca41e8b0c",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:47:59Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Inventory check passed",
+    "request_id": "req-ce32badbb83d",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:48:32Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Transaction rollback failed: deadlock detected",
+    "request_id": "req-d6fe35b251e8",
+    "trace_id": "trace-dfbc8ca1fceb4739",
+    "error_code": "ERR_5XX",
+    "retry_count": 1,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:48:27Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Upstream auth-service returned 500",
+    "request_id": "req-1faf586783b4",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 1,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:52:28Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Partial fulfillment: 2 of 3 items available",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:44:27Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Upstream auth-service returned 500",
+    "req_id": "req-2e48009ea2f3",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 2,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:54:15Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "Upstream response time degraded: 1800ms",
+    "request_id": "req-4ee6aae3ae04",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:43:50Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Database write failed: connection pool exhausted",
+    "request_id": "req-c508ea8d4008",
+    "error_code": "ERR_5XX",
+    "retry_count": 2,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:47:28Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Cannot connect to payments-service: no route to host",
+    "request_id": "req-ee81c67b2524",
+    "error_code": "ERR_5XX",
+    "retry_count": 2,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:49:00Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Stripe API returned 503: Service Unavailable",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 1,
+    "dependency": "payments-service",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-63f388a7c416",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:44:57Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Circuit breaker OPEN: payments-service",
+    "request_id": "req-3255229c84c4",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 2,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:52:28Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Token validated",
+    "request_id": "req-8e1cd7e314bc",
+    "host": "pod-auth-3-c",
+    "trace_id": "trace-ac5d25d1eb3fe061",
+    "duration_ms": 82.6
+  },
+  {
+    "timestamp": "2024-06-14T14:48:13Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Downstream dependency auth-service returning 500",
+    "request_id": "req-ac27d822cc43",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 3,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:48:08Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Gateway timeout after 30s waiting for orders-service",
+    "request_id": "req-524e53337ba5",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:46:16Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Upstream payments-service unreachable",
+    "request_id": "req-860b3b7b6378",
+    "error_code": "ERR_5XX",
+    "retry_count": 1,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:50:37Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Auth service downstream dependency unreachable",
+    "request_id": "req-76d344d68f02",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 2,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T14:53:42Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Failed to route request: no healthy upstreams",
+    "request_id": "req-2cb00bb6ebd3",
+    "error_code": "ERR_5XX",
+    "retry_count": 1,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:55:41Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Failed to publish payment event to Kafka",
+    "request_id": "req-7820a5b18eaf",
+    "error_code": "ERR_5XX",
+    "retry_count": 1,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:56:47Z",
+    "service": "auth",
+    "level": "WARN",
+    "message": "Token expiry approaching",
+    "request_id": "req-856a9933b29e"
+  },
+  {
+    "timestamp": "2024-06-14T14:46:21Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Failed to connect to user-service: connection refused",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-a6d304a100c5"
+  },
+  {
+    "timestamp": "2024-06-14T14:47:30Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Cannot connect to payments-service: no route to host",
+    "request_id": "req-58639a57bcca",
+    "env": "production",
+    "error_code": "ERR_5XX",
+    "retry_count": 2,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:53:10Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "JWT decode error: malformed token",
+    "req_id": "req-d5df7c9541b1",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 2,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T14:54:01Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Stripe API returned 503: Service Unavailable",
+    "request_id": "req-dc0ae2fa3888",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:56:04Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Critical: order-service pod OOMKilled",
+    "error_code": "ERR_5XX",
+    "retry_count": 3,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-e92056e919d8",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:47:48Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Database write failed: connection pool exhausted",
+    "request_id": "req-6ae4771aaaf4",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 2,
+    "dependency": "payments-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:54:38Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Auth service downstream dependency unreachable",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 3,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-c4c3aba473a5"
+  },
+  {
+    "timestamp": "2024-06-14T15:00:15Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Redis cache unavailable, falling back to DB",
+    "request_id": "req-bd374b0ea3f9",
+    "error_code": "ERR_5XX",
+    "retry_count": 2,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T14:55:42Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Refund initiated for order",
+    "request_id": "req-23fd7a509bb8",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:50:26Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Downstream dependency auth-service returning 500",
+    "request_id": "req-42fd38f69df9",
+    "duration_ms": 340.31,
+    "env": "production",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 1,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:53:23Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "SSL handshake failed",
+    "request_id": "req-651b77acb220",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 2,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:53:21Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Failed to reserve inventory: service timeout",
+    "request_id": "req-b89845065553",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 1,
+    "dependency": "payments-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:56:18Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Failed to publish payment event to Kafka",
+    "request_id": "req-1a2228e069a9",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 2,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:52:00Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Circuit breaker OPEN: payments-service",
+    "request_id": "req-89684cd76a89",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:00:15Z",
+    "service": "auth",
+    "level": "WARN",
+    "message": "Rate limit threshold approaching for IP",
+    "request_id": "req-8b81bce4965d",
+    "host": "pod-auth-1-b",
+    "user_id": "usr_1583",
+    "duration_ms": 475.1
+  },
+  {
+    "timestamp": "2024-06-14T14:51:12Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Payment processing failed: timeout after 30s",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 2,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-5ab2dc0e0341",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:01:27Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Critical: order-service pod OOMKilled",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 2,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-6e9f4b1fb556",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:54:49Z",
+    "service": "payments",
+    "level": "WARN",
+    "message": "Currency conversion rate stale",
+    "request_id": "req-060ea1d4a1d8",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:56:54Z",
+    "service": "gateway",
+    "level": "warn",
+    "message": "TLS certificate expires in 14 days",
+    "request_id": "req-6ff6bad29705",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:53:24Z",
+    "service": "payments",
+    "level": "error",
+    "message": "Failed to publish payment event to Kafka",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 3,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-b01ced6deb64",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:02:23Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Failed to connect to user-service: connection refused",
+    "request_id": "req-56d3ef2aede4",
+    "env": "production",
+    "trace_id": "trace-1eb92182da10f2bd",
+    "error_code": "ERR_5XX",
+    "retry_count": 2,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T15:01:51Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request routed to orders-service",
+    "request_id": "req-276a1057a537",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:53:40Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Failed to publish payment event to Kafka",
+    "request_id": "req-79bb506c5c19",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 2,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:52:21Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "SSL handshake failed",
+    "request_id": "req-8ef83ce469f3",
+    "host": "pod-gateway-3-a",
+    "user_id": "usr_2537",
+    "trace_id": "trace-1df598c51fc19a5d",
+    "error_code": "ERR_5XX",
+    "retry_count": 3,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:03:50Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Refund initiated for order",
+    "request_id": "req-0e24bc5eeb63",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:02:15Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Circuit breaker OPEN for Stripe dependency",
+    "request_id": "req-add83c1ab9c6",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 3,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:55:26Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Stale cache detected for product catalog",
+    "request_id": "req-b3dc4ec015eb",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:04:58Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Retry sending order event to queue",
+    "request_id": "req-8df89dfd3f88",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:58:44Z",
+    "service": "auth",
+    "level": "WARN",
+    "message": "Token expiry approaching",
+    "request_id": "req-3a5131c542bf"
+  },
+  {
+    "timestamp": "2024-06-14T15:00:48Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Order event publish failed: Kafka broker unreachable",
+    "request_id": "req-ab29d3a77f58",
+    "error_code": "ERR_5XX",
+    "retry_count": 3,
+    "dependency": "payments-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:06:30Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Transaction rollback failed: deadlock detected",
+    "request_id": "req-a350479e2b17",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 3,
+    "dependency": "kafka",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:52:28Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "Upstream response time degraded: 1800ms",
+    "request_id": "req-fb5d748d6ca5",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:54:10Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Database connection timeout during auth check",
+    "request_id": "req-bff6274c93c3",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 2,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T15:05:10Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "TLS certificate expires in 14 days",
+    "request_id": "req-e82411f348fb",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:57:40Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "High request volume detected: 4200 req/min",
+    "request_id": "req-ca613007eff4",
+    "duration_ms": 476.23,
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:05:20Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Session created for user",
+    "request_id": "req-ebddbd47f1f1"
+  },
+  {
+    "timestamp": "2024-06-14T15:03:49Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Critical: order-service pod OOMKilled",
+    "request_id": "req-80fe4732f49a",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:58:22Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Cart checkout initiated",
+    "request_id": "req-0f40e07a90c4",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:06:57Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Payment method tokenized",
+    "request_id": "req-24a440a05b68",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:01:18Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Failed to route request: no healthy upstreams",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 2,
+    "dependency": "payments-service",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-ba95e23701a7",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:08:30Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Retry sending order event to queue",
+    "request_id": "req-1eab520c2cc1",
+    "duration_ms": 490.33,
+    "host": "pod-orders-1-b",
+    "user_id": "usr_9398",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:53:04Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "Upstream response time degraded: 1800ms",
+    "request_id": "req-27d6f16056e4",
+    "host": "pod-gateway-5-e",
+    "duration_ms": 366.8,
+    "env": "production",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T14:59:56Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request rate within limits",
+    "request_id": "req-c0043b19b52e",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:06:48Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Payment processing failed: timeout after 30s",
+    "request_id": "req-921d8c37bd93",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:11:18Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Order event publish failed: Kafka broker unreachable",
+    "error_code": "ERR_5XX",
+    "retry_count": 1,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE",
+    "request_id": "req-96f20711718c",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:08:49Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "SSL handshake failed",
+    "request_id": "req-3c39359fd31b",
+    "error_code": "ERR_5XX",
+    "retry_count": 1,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:04:48Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Failed to route request: no healthy upstreams",
+    "request_id": "req-88fe8d1d3969",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 3,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:10:10Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "Upstream response time degraded: 1800ms",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:10:16Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Redis cache unavailable, falling back to DB",
+    "request_id": "req-17a675a08416",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 1,
+    "dependency": "orders-service",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T15:08:33Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Critical: order-service pod OOMKilled",
+    "request_id": "req-b4b81dee1653",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 1,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:04:15Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Auth service downstream dependency unreachable",
+    "request_id": "req-1e55ce04ade3",
+    "error_code": "ERR_5XX",
+    "retry_count": 2,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE"
+  },
+  {
+    "timestamp": "2024-06-14T15:04:14Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Gateway timeout after 30s waiting for orders-service",
+    "request_id": "req-f71c2c8a9fed",
+    "error_code": "ERR_5XX",
+    "retry_count": 3,
+    "dependency": "postgres",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:09:58Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Order DB write failed: disk quota exceeded",
+    "request_id": "req-85fa492e972b",
+    "user_id": "usr_2043",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1,
+    "dependency": "redis",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:09:41Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Subscription renewed",
+    "request_id": "req-b33ea0851434",
+    "env": "production",
+    "host": "pod-payments-2-c",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:04:40Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Transaction rollback failed: deadlock detected",
+    "request_id": "req-66d2f2be33cc",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 1,
+    "dependency": "auth-service",
+    "dependency_status": "UNREACHABLE",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:15:00Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Circuit breaker OPEN for Stripe dependency",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 1,
+    "request_id": "req-17ecff510006",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:16:09Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Order event publish failed: Kafka broker unreachable",
+    "request_id": "req-eff6f2dd27bd",
+    "trace_id": "trace-f1519a4581e30b4e",
+    "error_code": "ERR_5XX",
+    "retry_count": 3,
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:16:44Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Circuit breaker OPEN for Stripe dependency",
+    "request_id": "req-e2ea6b65f781",
+    "env": "production",
+    "error_code": "ERR_5XX",
+    "retry_count": 3,
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:17:44Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Critical: order-service pod OOMKilled",
+    "request_id": "req-7314db47189c",
+    "error_code": "ERR_5XX",
+    "retry_count": 1,
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:18:01Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Critical: order-service pod OOMKilled",
+    "request_id": "req-0afc73624d78",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1,
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:20:15Z",
+    "service": "payments",
+    "level": "WARN",
+    "message": "Payment retry attempt 2 of 3",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:21:51Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Order event publish failed: Kafka broker unreachable",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1,
+    "request_id": "req-6a89b9a77da1",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:22:21Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Session created for user",
+    "request_id": "req-5f90db2129a0"
+  },
+  {
+    "timestamp": "2024-06-14T15:22:00Z",
+    "service": "auth",
+    "level": "WARN",
+    "message": "Token expiry approaching",
+    "request_id": "req-4019e4fcd3cc"
+  },
+  {
+    "timestamp": "2024-06-14T15:24:07Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Password reset email sent",
+    "request_id": "req-8956c8bc1e48"
+  },
+  {
+    "timestamp": "2024-06-14T15:22:59Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order created successfully",
+    "request_id": "req-032ca8b9b197",
+    "trace_id": "trace-2c34e18c4f35157d",
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:26:16Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Failed to reserve inventory: service timeout",
+    "request_id": "req-329e8ffc5756",
+    "error_code": "ERR_TIMEOUT",
+    "retry_count": 1,
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:28:52Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "User login successful",
+    "request_id": "req-d79091e1542f"
+  },
+  {
+    "timestamp": "2024-06-14T15:30:08Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Subscription renewed",
+    "request_id": "req-e60a2b97b5cf"
+  },
+  {
+    "timestamp": "2024-06-14T15:27:30Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Auth service downstream dependency unreachable",
+    "request_id": "req-6d52632a2259",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 2
+  },
+  {
+    "timestamp": "2024-06-14T15:26:11Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Payment service cannot reach orders-service",
+    "request_id": "req-7e99e8981c9a",
+    "error_code": "ERR_5XX",
+    "retry_count": 3,
+    "incident_id": "INC-4021"
+  },
+  {
+    "timestamp": "2024-06-14T15:30:06Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order fulfillment triggered",
+    "duration_ms": 275.22,
+    "request_id": "req-669d640d7b9e"
+  },
+  {
+    "timestamp": "2024-06-14T15:33:46Z",
+    "service": "auth",
+    "level": "WARN",
+    "message": "Token expiry approaching",
+    "request_id": "req-6db933f74790"
+  },
+  {
+    "timestamp": "2024-06-14T15:32:44Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Critical: order-service pod OOMKilled",
+    "req_id": "req-bb6d134b6527",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 3
+  },
+  {
+    "timestamp": "2024-06-14T15:32:35Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Request routed to payments-service",
+    "request_id": "req-f48005f67329"
+  },
+  {
+    "timestamp": "2024-06-14T15:36:27Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Upstream auth-service returned 500",
+    "request_id": "req-a18f4f9e6f54",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1
+  },
+  {
+    "timestamp": "2024-06-14T15:34:51Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Cannot connect to payments-service: no route to host",
+    "request_id": "req-69fe8b0346d7",
+    "error_code": "ERR_CIRCUIT_OPEN",
+    "retry_count": 2
+  },
+  {
+    "timestamp": "2024-06-14T15:33:22Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "Upstream payments-service unreachable",
+    "request_id": "req-26205db380e5",
+    "host": "pod-gateway-2-b",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 1
+  },
+  {
+    "timestamp": "2024-06-14T15:30:28Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Payment service cannot reach orders-service",
+    "request_id": "req-734895596ef8",
+    "error_code": "ERR_CONN_REFUSED",
+    "retry_count": 2
+  },
+  {
+    "timestamp": "2024-06-14T15:37:29Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Database connection timeout during auth check",
+    "request_id": "req-8952b7df597d",
+    "error_code": "ERR_5XX",
+    "retry_count": 3
+  },
+  {
+    "timestamp": "2024-06-14T15:42:07Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "High request volume detected: 4200 req/min",
+    "request_id": "req-815bf9ee8a30"
+  },
+  {
+    "timestamp": "2024-06-14T15:42:16Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Payment processing failed: timeout after 30s",
+    "request_id": "req-2069379a636b"
+  },
+  {
+    "timestamp": "2024-06-14T15:33:51Z",
+    "service": "gateway",
+    "level": "ERROR",
+    "message": "SSL handshake failed",
+    "request_id": "req-85fb0546017c"
+  },
+  {
+    "timestamp": "2024-06-14T15:38:01Z",
+    "service": "payments",
+    "level": "ERROR",
+    "message": "Database write failed: connection pool exhausted",
+    "request_id": "req-f62a39afc92a"
+  },
+  {
+    "timestamp": "2024-06-14T15:39:54Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Auth service downstream dependency unreachable",
+    "request_id": "req-df7833858cc7"
+  },
+  {
+    "timestamp": "2024-06-14T15:35:27Z",
+    "service": "auth",
+    "level": "ERROR",
+    "message": "Token validation failed: signature mismatch",
+    "request_id": "req-8139898201b2"
+  },
+  {
+    "timestamp": "2024-06-14T15:40:54Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Delivery estimate calculated",
+    "request_id": "req-74637b483526",
+    "duration_ms": 268.5
+  },
+  {
+    "timestamp": "2024-06-14T15:50:36Z",
+    "service": "payments",
+    "level": "WARN",
+    "message": "Payment retry attempt 2 of 3",
+    "request_id": "req-7752cf58b985"
+  },
+  {
+    "timestamp": "2024-06-14T15:38:12Z",
+    "service": "payments",
+    "level": "INFO",
+    "message": "Invoice generated",
+    "request_id": "req-ad77997f7acd"
+  },
+  {
+    "timestamp": "2024-06-14T15:49:01Z",
+    "service": "gateway",
+    "level": "WARN",
+    "message": "Circuit breaker HALF-OPEN, testing upstream",
+    "request_id": "req-0e871340514d"
+  },
+  {
+    "timestamp": "2024-06-14T15:49:29Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Rate limit check passed",
+    "request_id": "req-5ee7e608db7d"
+  },
+  {
+    "timestamp": "2024-06-14T15:48:19Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Token validated",
+    "request_id": "req-0f51642965aa"
+  },
+  {
+    "timestamp": "2024-06-14T15:42:29Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Cannot connect to payments-service: no route to host",
+    "request_id": "req-d4f5a173ec2f",
+    "env": "production",
+    "host": "pod-orders-1-a"
+  },
+  {
+    "timestamp": "2024-06-14T15:45:42Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Health check passed",
+    "request_id": "req-c2fc4c998fa6"
+  },
+  {
+    "timestamp": "2024-06-14T15:43:48Z",
+    "service": "gateway",
+    "level": "INFO",
+    "message": "Health check passed",
+    "request_id": "req-1191f4c2d539"
+  },
+  {
+    "timestamp": "2024-06-14T15:56:15Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Downstream dependency auth-service returning 500",
+    "request_id": "req-218970df8480"
+  },
+  {
+    "timestamp": "2024-06-14T16:01:40Z",
+    "service": "auth",
+    "level": "WARN",
+    "message": "Unusual login location detected",
+    "request_id": "req-36cfd5613624"
+  },
+  {
+    "timestamp": "2024-06-14T15:43:44Z",
+    "service": "auth",
+    "level": "WARN",
+    "message": "Login attempt with expired token"
+  },
+  {
+    "timestamp": "2024-06-14T16:03:41Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Order status updated to SHIPPED",
+    "trace_id": "trace-45e7db98ba811639",
+    "host": "pod-orders-5-c",
+    "request_id": "req-1fce6c8cb802"
+  },
+  {
+    "timestamp": "2024-06-14T16:05:09Z",
+    "service": "orders",
+    "level": "ERROR",
+    "message": "Failed to reserve inventory: service timeout",
+    "request_id": "req-9649f59b36a8",
+    "env": "production"
+  },
+  {
+    "timestamp": "2024-06-14T15:45:14Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Password reset email sent",
+    "request_id": "req-6760f9521e88",
+    "host": "pod-auth-5-a",
+    "duration_ms": 436.38,
+    "env": "production"
+  },
+  {
+    "timestamp": "2024-06-14T15:48:06Z",
+    "service": "auth",
+    "level": "INFO",
+    "message": "Session created for user",
+    "request_id": "req-6dabf21d93ce",
+    "env": "production",
+    "duration_ms": 203.39
+  },
+  {
+    "timestamp": "2024-06-14T15:51:27Z",
+    "service": "orders",
+    "level": "WARN",
+    "message": "Order processing time exceeds SLA threshold",
+    "request_id": "req-bf537b65a5b3"
+  },
+  {
+    "timestamp": "2024-06-14T16:08:59Z",
+    "service": "orders",
+    "level": "INFO",
+    "message": "Cart checkout initiated",
+    "request_id": "req-116f9d3af118"
+  },
+  {
+    "timestamp": "2024-06-14T16:08:24Z",
+    "service": "gateway",
+    "level": "info",
+    "message": "Response returned in 45ms",
+    "request_id": "req-f940a64c3cb0"
+  }
+]

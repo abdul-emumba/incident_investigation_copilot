@@ -1,0 +1,318 @@
+{
+  "runbook_id": "RB-ORD-001",
+  "service": "orders",
+  "version": "4.x",
+  "last_updated": "2024-06-16",
+  "last_updated_by": "dave@example.com",
+  "owner": {
+    "team": "Commerce Platform",
+    "slack": "#commerce-platform",
+    "on_call": "pagerduty:commerce-oncall"
+  },
+  "dependencies": {
+    "hard": [
+      "auth-service",
+      "payments-service",
+      "inventory-service",
+      "orders-db",
+      "kafka"
+    ],
+    "soft": [
+      "s3",
+      "notifications-service"
+    ],
+    "notes": "orders-service depends on a lot of things. When debugging, start with auth and payments \u2014 those are the most common culprits for order failures. Kafka failure degrades event publishing but synchronous order creation still works. S3 failures only affect export feature. Note: orders-db disk usage must be monitored \u2014 we have had a WAL archive incident before (INC-4021). Check disk alert thresholds are set."
+  },
+  "common_issues": [
+    {
+      "issue_id": "ORD-001",
+      "title": "Orders failing to create / 500 on POST /orders",
+      "symptoms": [
+        "HTTP 500 on POST /api/v1/orders",
+        "Error rate spike on 'Orders Creation' Datadog dashboard",
+        "Support tickets: customers completing checkout but no order appearing",
+        "orders-service logs showing exception stack traces"
+      ],
+      "likely_causes": [
+        "payments-service unavailable \u2014 orders cannot be placed without payment confirmation",
+        "auth-service returning errors \u2014 token validation failing",
+        "orders-db at capacity (disk full, connection pool exhausted)",
+        "inventory-service timeout \u2014 stock reservation failing",
+        "Kafka producer failing \u2014 usually non-blocking but can cause issues in some code paths"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Check orders-service pod logs for the actual error",
+          "command": "kubectl logs -l app=orders-service --since=10m | grep -i 'error\\|exception\\|failed' | tail -30",
+          "note": "The error message usually tells you exactly which dependency failed. Don't guess \u2014 read the logs first."
+        },
+        {
+          "order": 2,
+          "action": "Check all hard dependencies are healthy",
+          "command": "for svc in auth-service payments-service inventory-service; do echo \"=== $svc ===\"; kubectl get pods -l app=$svc; done",
+          "note": "Any CrashLoopBackOff or Pending pods in dependencies will cascade to orders. Fix the dependency first."
+        },
+        {
+          "order": 3,
+          "action": "Check orders-db disk usage",
+          "command": "kubectl exec deploy/orders-service -- psql $DATABASE_URL -c \"SELECT pg_size_pretty(pg_database_size('orders'));\"",
+          "note": "If this times out, the DB might already be in trouble. Check the disk alert in Datadog. Disk full = all writes fail silently. This is what happened in INC-4021."
+        },
+        {
+          "order": 4,
+          "action": "Check WAL archive size if disk is high",
+          "command": "kubectl exec -it orders-db-primary-0 -- du -sh /var/lib/postgresql/data/pg_wal/",
+          "note": "WAL directory growing unexpectedly large suggests the archive cron job is not running. Check cron logs. Last time this happened we had 47 days of unarchived WAL. See INC-4021."
+        },
+        {
+          "order": 5,
+          "action": "If WAL is the problem, prune carefully",
+          "command": "kubectl exec -it orders-db-primary-0 -- pg_archivecleanup /var/lib/postgresql/data/pg_wal/ <last_known_good_wal_file>",
+          "note": "Do NOT just delete files from pg_wal manually. Use pg_archivecleanup. Get a second set of eyes on this before proceeding. If unsure, escalate to DBA on-call."
+        },
+        {
+          "order": 6,
+          "action": "Check Kafka producer health if dependency services are fine",
+          "command": "kubectl exec deploy/orders-service -- curl -s localhost:8080/internal/kafka/status | jq .",
+          "note": "Kafka failures should be logged but non-fatal for order creation. If the service is treating Kafka failure as fatal, that's a bug."
+        }
+      ],
+      "escalation": "Order creation failures are P1 during business hours. Page commerce on-call. If payments-service is the root cause, also page payments on-call."
+    },
+    {
+      "issue_id": "ORD-002",
+      "title": "Orders stuck in 'Processing' status",
+      "symptoms": [
+        "Orders created but never transition to CONFIRMED or SHIPPED",
+        "Kafka consumer lag growing on orders.created topic",
+        "Fulfillment emails not being sent",
+        "orders-service logs show orders created successfully but downstream silent"
+      ],
+      "likely_causes": [
+        "Kafka consumer lag \u2014 downstream consumer (notifications, fulfillment) is backed up",
+        "Poison-pill message blocking a Kafka partition (deserialization failure on one message stops the whole partition)",
+        "notifications-service or fulfillment-service is down",
+        "Orders not actually missing \u2014 just delayed due to consumer lag"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Check Kafka consumer lag for orders.created topic",
+          "command": "kubectl exec -it kafka-0 -- kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group notifications-service-cg",
+          "note": "Look at the LAG column. A few hundred is normal. Tens of thousands means something is blocking consumption. Note: there's also a fulfillment consumer group \u2014 check that too. Can't remember the exact group name, check with Dave."
+        },
+        {
+          "order": 2,
+          "action": "Check for poison-pill messages",
+          "command": "kubectl logs -l app=notifications-service | grep -i 'deserializ\\|parse\\|error' | tail -20",
+          "note": "A deserialization error repeating on the same offset means the consumer is stuck on a bad message. The message offset will be in the log."
+        },
+        {
+          "order": 3,
+          "action": "Skip the poison-pill message if confirmed",
+          "command": "kubectl exec -it kafka-0 -- kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group notifications-service-cg --topic orders.created --reset-offsets --to-offset <bad_offset+1> --execute",
+          "note": "Only do this if you have confirmed the message is malformed and cannot be processed. The skipped message goes to the dead-letter queue if DLQ is configured. Check that it's configured first \u2014 it was added after INC-4021 but may not be on all consumer groups."
+        },
+        {
+          "order": 4,
+          "action": "Check if orders are actually lost or just delayed",
+          "command": "kubectl exec deploy/orders-service -- psql $DATABASE_URL -c \"SELECT id, status, created_at FROM orders WHERE status = 'PROCESSING' AND created_at < NOW() - INTERVAL '30 minutes' LIMIT 20;\"",
+          "note": "Orders more than 30 minutes in PROCESSING state are genuinely stuck. Orders less than 30 minutes old might just be delayed by consumer lag. Don't panic if it's the latter."
+        },
+        {
+          "order": 5,
+          "action": "Manually reprocess stuck orders if needed",
+          "command": "There's a script for this somewhere \u2014 ask Dave. It's not in this runbook yet. TODO: add it.",
+          "note": "Last time we needed to reprocess, Dave ran it manually. It re-publishes the orders.created events for specific order IDs. Very much a last resort."
+        }
+      ],
+      "escalation": "If consumer lag exceeds 100,000 messages or orders have been stuck for over an hour, escalate to #commerce-platform and page commerce on-call."
+    },
+    {
+      "issue_id": "ORD-003",
+      "title": "Inventory going negative / overselling",
+      "symptoms": [
+        "inventory-service shows negative stock count for a SKU",
+        "Multiple customers ordered same last item simultaneously",
+        "Orders confirmed for items that should have been out of stock"
+      ],
+      "likely_causes": [
+        "Race condition: check-and-decrement on inventory is not atomic",
+        "Inventory reservation call is async or being skipped under load",
+        "Cache serving stale stock count \u2014 Redis cache not invalidated on purchase"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Identify affected SKUs",
+          "command": "kubectl exec deploy/inventory-service -- psql $DATABASE_URL -c \"SELECT sku_id, stock_count FROM inventory WHERE stock_count < 0;\"",
+          "note": "Get the list of negative-stock SKUs. Cross-reference with orders to understand how many customers are affected."
+        },
+        {
+          "order": 2,
+          "action": "Temporarily set affected SKUs to unavailable",
+          "command": "kubectl exec deploy/inventory-service -- psql $DATABASE_URL -c \"UPDATE inventory SET available = false WHERE sku_id IN ('<sku_ids>');\"",
+          "note": "This prevents more overselling while you investigate. Coordinate with product team before doing this \u2014 they may prefer a different approach."
+        },
+        {
+          "order": 3,
+          "action": "Check if inventory reservation is using atomic operations",
+          "command": "Look at inventory-service source code, reservation handler. It should use a SELECT FOR UPDATE or equivalent. If not, that's the bug.",
+          "note": "This is a code review task, not a kubectl task. The fix requires a deploy. In the meantime, scaling inventory-service down to 1 pod reduces (but doesn't eliminate) the race."
+        },
+        {
+          "order": 4,
+          "action": "Decide what to do with oversold orders",
+          "command": "N/A \u2014 this is a business decision, not a technical one.",
+          "note": "Options: (1) honour all orders and fulfil from back-stock/reorder. (2) Cancel excess orders with apology and voucher. (3) Something else. Get Dave and product lead on a call."
+        }
+      ],
+      "escalation": "Overselling is a business-impacting incident. Involve commerce on-call and product lead immediately. Do not make unilateral decisions about order cancellations."
+    },
+    {
+      "issue_id": "ORD-004",
+      "title": "Duplicate orders created on payment retry",
+      "symptoms": [
+        "Customer reports being shipped two identical orders",
+        "orders-db shows two orders with same cart session but different order IDs",
+        "Stripe shows one successful charge but two fulfillment events"
+      ],
+      "likely_causes": [
+        "Idempotency token missing on order creation endpoint",
+        "Frontend retried after timeout and created second order with new idempotency token",
+        "Payment retry logic creating new order instead of resuming existing one"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Confirm duplication in orders-db",
+          "command": "kubectl exec deploy/orders-service -- psql $DATABASE_URL -c \"SELECT cart_session_id, count(*), array_agg(id) FROM orders GROUP BY cart_session_id HAVING count(*) > 1 ORDER BY count(*) DESC LIMIT 10;\"",
+          "note": "If you see multiple orders per cart_session_id, that's your duplicate. Check the timestamps \u2014 usually within seconds of each other."
+        },
+        {
+          "order": 2,
+          "action": "Cancel the duplicate orders",
+          "command": "kubectl exec deploy/orders-service -- psql $DATABASE_URL -c \"UPDATE orders SET status = 'CANCELLED', cancellation_reason = 'duplicate' WHERE id = '<duplicate_order_id>';\"",
+          "note": "Cancel the later one unless there's a reason to prefer it. Make sure any shipped items are intercepted if possible \u2014 coordinate with fulfillment."
+        },
+        {
+          "order": 3,
+          "action": "Check if idempotency is enforced on order creation",
+          "command": "kubectl logs deploy/orders-service | grep 'idempotency\\|cart_session' | tail -20",
+          "note": "Should see idempotency key logged for each order creation. If absent, the feature may not be deployed or is misconfigured."
+        },
+        {
+          "order": 4,
+          "action": "Check current idempotency config",
+          "command": "kubectl get deploy/orders-service -o json | jq '.spec.template.spec.containers[0].env[] | select(.name | contains(\"IDEMPOTENCY\"))'",
+          "note": "ORDER_IDEMPOTENCY_ENABLED should be true. If missing, feature is off. Was added as a fix post-INC-3844 \u2014 should be present in v4.14.0+."
+        }
+      ],
+      "escalation": "If more than 5 customers affected, notify customer support lead to prepare outreach. Notify Dave."
+    },
+    {
+      "issue_id": "ORD-005",
+      "title": "Order data visible across tenants / privacy leak",
+      "symptoms": [
+        "Customer reports seeing another customer's orders",
+        "Admin export contains orders from all tenants",
+        "GET /orders returns more results than expected for a user"
+      ],
+      "likely_causes": [
+        "Missing tenant_id filter in query (most likely after a migration or new endpoint was added)",
+        "Caching layer not scoped to user/tenant context",
+        "Admin export endpoint missing tenancy clause"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "STOP \u2014 do not investigate casually. This is a data privacy incident.",
+          "command": "N/A",
+          "note": "Immediately notify security-team@example.com and alice@example.com. Document what you know. Do not access data you're not authorised to access during investigation."
+        },
+        {
+          "order": 2,
+          "action": "Disable the affected endpoint immediately",
+          "command": "kubectl set env deployment/orders-service ORDER_EXPORT_ENABLED=false",
+          "note": "Or set a feature flag to disable. The priority is stopping data exposure, not understanding it."
+        },
+        {
+          "order": 3,
+          "action": "Identify how long the leak has been active",
+          "command": "kubectl logs deploy/orders-service --since=24h | grep '<affected_endpoint>' | wc -l",
+          "note": "You need to know the window of exposure for GDPR notification purposes. Preserve logs \u2014 do not allow them to rotate."
+        },
+        {
+          "order": 4,
+          "action": "Identify which customers' data was exposed",
+          "command": "Access logs from the affected endpoint. Correlate requesting user with order data returned. This will require a forensic query \u2014 get DBA on-call involved.",
+          "note": "This is for GDPR breach notification. Legal needs to know within 72 hours if this is a reportable breach. Do not delay."
+        }
+      ],
+      "escalation": "This is a P0 security incident. Page security on-call, notify Dave, and alert legal team. Do not discuss in public Slack channels."
+    },
+    {
+      "issue_id": "ORD-006",
+      "title": "Slow order queries / dashboard timeouts",
+      "symptoms": [
+        "Admin dashboard timing out when loading order lists",
+        "GET /orders endpoint P99 > 5 seconds",
+        "orders-db CPU spiking to 90%+ during dashboard load",
+        "Postgres slow query log filling up"
+      ],
+      "likely_causes": [
+        "Missing index on frequently queried columns (status, created_at, customer_id)",
+        "Analytics dashboard firing too many queries simultaneously",
+        "A new query added without EXPLAIN ANALYZE check",
+        "Table bloat from high write volume not being VACUUMed"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Identify slow queries",
+          "command": "kubectl exec deploy/orders-service -- psql $DATABASE_URL -c \"SELECT query, calls, mean_exec_time FROM pg_stat_statements ORDER BY mean_exec_time DESC LIMIT 10;\"",
+          "note": "pg_stat_statements must be enabled. If you get 'relation not found', it's not enabled \u2014 ask DBA. Alternatively check the slow query log: kubectl exec orders-db-primary-0 -- tail -100 /var/log/postgresql/postgresql.log"
+        },
+        {
+          "order": 2,
+          "action": "Check indexes on orders table",
+          "command": "kubectl exec deploy/orders-service -- psql $DATABASE_URL -c \"SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';\"",
+          "note": "Should have indexes on: customer_id, created_at, status, and ideally composite (customer_id, created_at DESC). If the composite index is missing, add it \u2014 but use CREATE INDEX CONCURRENTLY to avoid locking."
+        },
+        {
+          "order": 3,
+          "action": "Add missing index without locking",
+          "command": "kubectl exec deploy/orders-service -- psql $DATABASE_URL -c \"CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_customer_created ON orders(customer_id, created_at DESC);\"",
+          "note": "CONCURRENTLY means it doesn't lock the table. Takes longer but safe for production. Monitor orders-db CPU while it runs."
+        },
+        {
+          "order": 4,
+          "action": "If analytics dashboard is the culprit, disable or rate-limit it",
+          "command": "kubectl set env deployment/orders-service ANALYTICS_DASHBOARD_ENABLED=false",
+          "note": "The analytics dashboard queries are known to be expensive. There's a ticket to rewrite them against a materialized view but it hasn't been done yet. See JIRA COM-512."
+        }
+      ],
+      "escalation": "Slow queries causing customer-facing timeouts are P2. If affecting all users, escalate to P1 and page commerce on-call."
+    }
+  ],
+  "general_health_checks": [
+    "kubectl get pods -l app=orders-service \u2014 all pods Running",
+    "curl -s https://orders.internal/health | jq .status \u2014 should be 'ok'",
+    "Check Datadog: 'Orders Overview' \u2014 order creation success rate, p99 latency",
+    "Check Kafka consumer lag: kafka-consumer-groups.sh --describe --group notifications-service-cg",
+    "Check orders-db disk usage \u2014 alert should fire at 75%, check manually if near that",
+    "Check pg_wal directory size on orders-db-primary-0 \u2014 should not be growing unbounded"
+  ],
+  "known_gaps": [
+    "Manual order reprocessing script exists but is not in this runbook \u2014 ask Dave",
+    "Analytics dashboard query performance is known bad \u2014 JIRA COM-512 not yet resolved",
+    "Inventory reservation is not fully atomic \u2014 race condition exists under high concurrency",
+    "Consumer group names for fulfillment service not documented \u2014 check with Dave",
+    "Order export feature streams rows but very large exports (10M+ orders) have not been tested"
+  ],
+  "notes": "Orders depends on nearly everything. When in doubt, check your dependencies before assuming orders-service itself is broken. The dependency health check script (check_deps.sh) may or may not be up to date \u2014 verify before trusting it.",
+  "incident_examples": [
+    "INC-4021"
+  ]
+}

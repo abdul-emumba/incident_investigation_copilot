@@ -1,0 +1,16 @@
+langchain
+langchain-community
+langchain-huggingface
+langchain-neo4j
+neo4j
+faiss-cpu
+rank-bm25
+sentence-transformers>=2.7.0
+groq
+tiktoken
+pandas
+python-dotenv
+torch
+streamlit
+plotly
+torchvision

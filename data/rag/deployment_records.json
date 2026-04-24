@@ -1,0 +1,585 @@
+[
+  {
+    "deployment_id": "deploy-770487",
+    "service": "auth",
+    "version": "2.13.0",
+    "timestamp": "2024-06-03T09:15:00Z",
+    "change_description": "Add support for passkey (FIDO2) authentication. New /auth/passkey/register and /auth/passkey/authenticate endpoints. Feature flagged off by default.",
+    "environment": "production",
+    "git_sha": "b523abd325501e76c0ed6b0ffea1b8be48fdb469",
+    "deployed_by": "github-actions",
+    "rollback_available": true,
+    "duration_seconds": 120
+  },
+  {
+    "deployment_id": "deploy-498591",
+    "service": "gateway",
+    "version": "1.22.1",
+    "timestamp": "2024-06-03T11:45:00Z",
+    "change_description": "Bump nginx base image to 1.25.4. No functional changes.",
+    "deployed_by": "dependabot-bot",
+    "environment": "production",
+    "git_sha": "454b42d1e85df6a760b835d184cc52503f9c167c",
+    "duration_seconds": 393,
+    "rollback_available": true
+  },
+  {
+    "deployment_id": "deploy-814825",
+    "service": "payments",
+    "version": "3.8.1",
+    "timestamp": "2024-06-04T23:15:00Z",
+    "change_description": "Increase Stripe HTTP client timeout from 10s to 25s following Stripe SLA advisory. Add retry jitter to avoid thundering-herd on transient failures.",
+    "git_sha": "eca55962b472dfc98831bf96dd3b5792c49c2398",
+    "environment": "production",
+    "deployed_by": "github-actions",
+    "rollback_available": true,
+    "duration_seconds": 180
+  },
+  {
+    "deployment_id": "deploy-503457",
+    "service": "orders",
+    "version": "4.15.1",
+    "timestamp": "2024-06-04T19:20:00Z",
+    "change_description": "Fix race condition in order status transitions: add optimistic lock on status field to prevent duplicate SHIPPED events. Resolves INC-3812.",
+    "environment": "production",
+    "rollback_available": true,
+    "deployed_by": "github-actions",
+    "duration_seconds": 150
+  },
+  {
+    "deployment_id": "deploy-847581",
+    "service": "orders",
+    "version": "4.16.0",
+    "timestamp": "2024-06-05T18:35:00Z",
+    "change_description": "Launch order scheduling feature: customers can select a preferred delivery date. Adds scheduled_at field to orders schema (nullable, backward compatible).",
+    "git_sha": "2bdf3ddb4d87bd4dc83166db001549b0f7dd10ed",
+    "rollback_available": true,
+    "environment": "production",
+    "deployed_by": "github-actions",
+    "duration_seconds": 150
+  },
+  {
+    "deployment_id": "deploy-153045",
+    "service": "auth",
+    "version": "2.13.1",
+    "timestamp": "2024-06-06T01:15:00Z",
+    "change_description": "Reduce bcrypt cost factor from 14 to 12 to improve login latency under load. Still within OWASP recommended range. Validated with load test.",
+    "deployed_by": "carol",
+    "rollback_available": false,
+    "environment": "production",
+    "duration_seconds": 120
+  },
+  {
+    "deployment_id": "deploy-604740",
+    "service": "gateway",
+    "version": "1.23.0",
+    "timestamp": "2024-06-06T20:15:00Z",
+    "change_description": "Add per-route rate limiting with tiered buckets: standard (100 req/min), enterprise (2000 req/min). API key header used to determine tier.",
+    "deployed_by": "github-actions",
+    "environment": "production",
+    "git_sha": "086e55641dda5afa182a27bb70933ab43fe4fec4",
+    "duration_seconds": 82,
+    "rollback_available": true
+  },
+  {
+    "deployment_id": "deploy-176819",
+    "service": "payments",
+    "version": "3.8.2",
+    "timestamp": "2024-06-07T00:55:00Z",
+    "change_description": "Add DKIM signing to transactional invoice emails. Resolves deliverability issues reported by enterprise accounts.",
+    "deployed_by": "alice",
+    "rollback_available": true,
+    "environment": "production",
+    "duration_seconds": 180
+  },
+  {
+    "deployment_id": "deploy-559469",
+    "service": "orders",
+    "version": "4.16.1",
+    "timestamp": "2024-06-07T19:25:00Z",
+    "change_description": "Add composite index on (customer_id, created_at DESC) to orders table. Resolves 45-second query slowdowns during peak hours (INC-3821).",
+    "rollback_available": true,
+    "environment": "production",
+    "deployed_by": "github-actions",
+    "duration_seconds": 150
+  },
+  {
+    "deployment_id": "deploy-795613",
+    "service": "auth",
+    "version": "2.13.2",
+    "timestamp": "2024-06-07T23:05:00Z",
+    "change_description": "Fix nightly session cleanup cron \u2014 add index on expires_at column. Reduces nightly CPU spike from 95% to under 15%.",
+    "environment": "production",
+    "rollback_available": true,
+    "deployed_by": "github-actions",
+    "duration_seconds": 120
+  },
+  {
+    "deployment_id": "deploy-734210",
+    "service": "gateway",
+    "version": "1.23.1",
+    "timestamp": "2024-06-10T09:00:00Z",
+    "change_description": "Switch gateway access logs to use X-Real-IP instead of remote_addr. Fixes client IP capture behind ALB. Resolves geo-analytics gap.",
+    "deployed_by": "carol",
+    "git_sha": "187b0ea64e520ab88273cce8678ddb6803c87968",
+    "duration_seconds": 215,
+    "environment": "production",
+    "rollback_available": true
+  },
+  {
+    "deployment_id": "deploy-531712",
+    "service": "payments",
+    "version": "3.9.0",
+    "timestamp": "2024-06-10T12:00:00Z",
+    "change_description": "Refactor Stripe integration layer: extract PaymentGatewayClient interface to support multiple providers. Internal restructure only \u2014 external behavior unchanged.",
+    "git_sha": "6b77d71e6dadf79e40929b9c9eb05f3203e5a825",
+    "rollback_available": true,
+    "environment": "production",
+    "deployed_by": "github-actions",
+    "duration_seconds": 180
+  },
+  {
+    "deployment_id": "deploy-481913",
+    "service": "orders",
+    "version": "4.16.2",
+    "timestamp": "2024-06-11T18:30:00Z",
+    "change_description": "Add idempotency token on order creation keyed to cart session ID. Prevents duplicate orders on payment retry (INC-3844).",
+    "rollback_available": true,
+    "environment": "production",
+    "deployed_by": "github-actions",
+    "duration_seconds": 150
+  },
+  {
+    "deployment_id": "deploy-631756",
+    "service": "auth",
+    "version": "2.14.0",
+    "timestamp": "2024-06-11T23:15:00Z",
+    "change_description": "Implement global account lockout via Redis: failed attempts tracked per-user across all pods. Fixes per-pod lockout bypass vulnerability.",
+    "deployed_by": "github-actions",
+    "duration_seconds": 385,
+    "environment": "production",
+    "rollback_available": true
+  },
+  {
+    "deployment_id": "deploy-810219",
+    "service": "gateway",
+    "version": "1.23.2",
+    "timestamp": "2024-06-12T19:00:00Z",
+    "change_description": "Add Cache-Control: private and Vary: Authorization headers to all authenticated endpoints. Prevents CDN from caching user-specific responses.",
+    "deployed_by": "bob",
+    "environment": "production",
+    "git_sha": "ae03411d186cb24f764ddad17b04d51d4a66b0c9",
+    "rollback_available": true,
+    "duration_seconds": 90
+  },
+  {
+    "deployment_id": "deploy-879779",
+    "service": "auth",
+    "version": "2.14.1",
+    "timestamp": "2024-06-13T20:45:00Z",
+    "change_description": "Add TOTP clock-skew tolerance: increase TOTP window to \u00b160 seconds to handle VM clock drift after resume from suspend.",
+    "deployed_by": "alice",
+    "environment": "production",
+    "rollback_available": true,
+    "duration_seconds": 120
+  },
+  {
+    "deployment_id": "deploy-989545",
+    "service": "orders",
+    "version": "4.16.3",
+    "timestamp": "2024-06-13T00:30:00Z",
+    "change_description": "Cap outbound webhook retries at 72 attempts over 72 hours. Add dead-letter queue for undeliverable webhooks. Resolves merchant DDoS complaints.",
+    "deployed_by": "carol",
+    "environment": "production",
+    "rollback_available": true,
+    "duration_seconds": 150
+  },
+  {
+    "deployment_id": "deploy-564071",
+    "service": "payments",
+    "version": "3.9.1",
+    "timestamp": "2024-06-13T18:10:00Z",
+    "change_description": "Add Stripe webhook signature verification using stripe.WebhookEvent.construct_event(). Closes unauthenticated webhook endpoint vulnerability found in audit.",
+    "environment": "production",
+    "deployed_by": "github-actions",
+    "rollback_available": true,
+    "duration_seconds": 180
+  },
+  {
+    "deployment_id": "deploy-583863",
+    "service": "gateway",
+    "version": "1.24.3",
+    "timestamp": "2024-06-14T14:05:00Z",
+    "change_description": "[INCIDENT-RESPONSE] Attempt to adjust upstream timeout for payments-service from 30s to 10s to fail faster and reduce user-facing hang time. Did not resolve root cause \u2014 payments pods are CrashLoopBackOff.",
+    "deployed_by": "alice",
+    "environment": "production",
+    "rollback_available": false,
+    "incident_ref": "INC-4021",
+    "tags": [
+      "incident-response"
+    ],
+    "duration_seconds": 90
+  },
+  {
+    "deployment_id": "deploy-242291",
+    "service": "gateway",
+    "version": "1.24.0",
+    "timestamp": "2024-06-14T18:00:00Z",
+    "change_description": "Deploy search ranking model v3.1: improved relevance scoring using click-through signals. A/B test gated to 10% of traffic initially.",
+    "deployed_by": "ml-pipeline",
+    "environment": "production",
+    "git_sha": "f6067eba29f46469dacc43d56c35b79bae4905b5",
+    "rollback_available": true,
+    "duration_seconds": 90
+  },
+  {
+    "deployment_id": "deploy-757193",
+    "service": "orders",
+    "version": "4.17.0",
+    "timestamp": "2024-06-14T01:20:00Z",
+    "change_description": "Launch bulk CSV export for admin users. Export runs as async background job, sends download link via email on completion. Streams rows to avoid OOM on large datasets.",
+    "deployed_by": "github-actions",
+    "environment": "production",
+    "git_sha": "f2cd55b020d0835760af6790523dd0af40c1c3a0",
+    "rollback_available": false,
+    "duration_seconds": 150
+  },
+  {
+    "deployment_id": "deploy-524045",
+    "service": "auth",
+    "version": "2.14.2",
+    "timestamp": "2024-06-14T09:00:00Z",
+    "change_description": "Rotate JWT signing secret as part of monthly key rotation schedule. New secret applied; old secret retained in JWKS for 30-minute overlap window.",
+    "deployed_by": "github-actions",
+    "environment": "production",
+    "duration_seconds": 326,
+    "rollback_available": false
+  },
+  {
+    "deployment_id": "deploy-384076",
+    "service": "auth",
+    "version": "2.14.3",
+    "timestamp": "2024-06-14T09:15:00Z",
+    "change_description": "[HOTFIX] Patch JWT key rotation: previous deploy (v2.15.3) failed to include old signing key in JWKS validation chain during rotation window. Users with tokens signed by old key were receiving 401. Fix adds both keys to validation endpoint for 30-minute overlap. Affects ~3,400 active sessions.",
+    "deployed_by": "carol",
+    "environment": "production",
+    "git_sha": "26cd1592ebddca2e925c717311ca9170b4ac3e9b",
+    "severity": "P1",
+    "rollback_available": true,
+    "tags": [
+      "hotfix",
+      "auth",
+      "jwt",
+      "breaking"
+    ],
+    "duration_seconds": 120,
+    "resolves_incident": "INC-4019"
+  },
+  {
+    "deployment_id": "deploy-929151",
+    "service": "gateway",
+    "version": "1.24.2",
+    "timestamp": "2024-06-14T10:30:00Z",
+    "change_description": "Re-enable search ranking model v3.1 for corrected 10% A/B cohort after dataset relabeling fix. Monitoring closely.",
+    "environment": "production",
+    "duration_seconds": 346,
+    "deployed_by": "github-actions",
+    "rollback_available": true
+  },
+  {
+    "deployment_id": "deploy-420214",
+    "service": "orders",
+    "version": "4.17.1",
+    "timestamp": "2024-06-14T11:00:00Z",
+    "change_description": "Run schema migration: add tenant_id filter index on orders table. Migration ran with pt-online-schema-change to avoid table lock.",
+    "deployed_by": "github-actions",
+    "environment": "production",
+    "rollback_available": true,
+    "duration_seconds": 150
+  },
+  {
+    "deployment_id": "deploy-264686",
+    "service": "payments",
+    "version": "3.10.0",
+    "timestamp": "2024-06-14T12:30:00Z",
+    "change_description": "Refactor PaymentGatewayClient to support multi-provider routing. Moves provider selection logic into a ProviderRouter class. Adds config flag PAYMENT_PROVIDER (default: stripe). No behavior change expected.",
+    "deployed_by": "github-actions",
+    "environment": "production",
+    "git_sha": "3ed55148644802487bce53eb55921ba0feb97399",
+    "rollback_available": true,
+    "duration_seconds": 180
+  },
+  {
+    "deployment_id": "deploy-900177",
+    "service": "payments",
+    "version": "3.11.0",
+    "timestamp": "2024-06-14T13:41:00Z",
+    "change_description": "BREAKING: Payments service v3.17.0 \u2014 complete overhaul of Stripe integration adapter. Changes: (1) Hardcoded Stripe charge endpoint to /v1/charges path for all card types \u2014 Amex requires /v1/payment_intents but this was overlooked in testing (tested with Visa/MC only). (2) Circuit breaker threshold accidentally set to failure_threshold=1 in new ProviderRouter config, causing breaker to open on the very first Stripe error rather than the intended threshold of 5. (3) Deployment pipeline deleted and recreated k8s secret 'payments-db-credentials' but new secret used incorrect Postgres host pointing to staging DB. Staging DB rejects production SSL certificates \u2014 payments pods enter CrashLoopBackOff within 2 minutes of deploy. Change was not flagged as breaking in PR review. Staging tests passed because staging Stripe account uses test cards (Visa only) and staging DB credentials are correct in staging environment.",
+    "deployed_by": "github-actions",
+    "environment": "production",
+    "git_sha": "907910fbc01406abeb677a71a2311aece81a465e",
+    "duration_seconds": 253,
+    "rollback_available": true,
+    "breaking_change": true,
+    "breaking_change_reason": "Amex endpoint regression + circuit breaker misconfiguration + wrong DB credentials secret in production k8s secret",
+    "pr_url": "https://github.com/example/payments/pull/1847",
+    "jira_ticket": "PAY-2291",
+    "tags": [
+      "breaking",
+      "incident-cause",
+      "payments",
+      "stripe",
+      "circuit-breaker"
+    ],
+    "reviewed_by": "bob",
+    "approved_by": "bob",
+    "test_coverage": "staging-only \u2014 production Amex path not covered by test suite"
+  },
+  {
+    "deployment_id": "deploy-595158",
+    "service": "payments",
+    "version": "3.11.1",
+    "timestamp": "2024-06-14T14:11:00Z",
+    "change_description": "[HOTFIX] Recreate k8s secret 'payments-db-credentials' with correct production Postgres host and sslmode=require. Previous deploy (v3.17.0) overwrote secret with staging DB host. Payments pods recovering from CrashLoopBackOff.",
+    "deployed_by": "carol",
+    "environment": "production",
+    "rollback_available": false,
+    "incident_ref": "INC-4021",
+    "severity": "P1",
+    "tags": [
+      "hotfix",
+      "incident-response",
+      "breaking-fix"
+    ],
+    "duration_seconds": 180
+  },
+  {
+    "deployment_id": "deploy-389666",
+    "service": "payments",
+    "version": "3.11.2",
+    "timestamp": "2024-06-14T14:35:00Z",
+    "change_description": "[HOTFIX] Fix circuit breaker configuration: failure_threshold was set to 1 in v3.17.0 ProviderRouter config instead of intended value of 5. Breaker was opening on single transient errors. Reset to threshold=5, recovery_timeout=30s. Deploying config-only patch.",
+    "environment": "production",
+    "duration_seconds": 46,
+    "rollback_available": true,
+    "incident_ref": "INC-4021",
+    "severity": "P1",
+    "tags": [
+      "hotfix",
+      "circuit-breaker",
+      "incident-response"
+    ],
+    "deployed_by": "github-actions"
+  },
+  {
+    "deployment_id": "deploy-978157",
+    "service": "payments",
+    "version": "3.11.3",
+    "timestamp": "2024-06-14T14:51:00Z",
+    "change_description": "[ROLLBACK] Rolling back payments-service to v3.15.2 (last known good). v3.17.0 introduced multiple critical regressions. Hotfixes in v3.17.1 and v3.17.2 partially recovered but Amex regression still present. Full rollback elected while proper fix is prepared in v3.18.0.",
+    "environment": "production",
+    "git_sha": "2f221fd53d6a55604791a2377121504c19f54777",
+    "duration_seconds": 207,
+    "incident_ref": "INC-4021",
+    "rollback_available": false,
+    "tags": [
+      "rollback",
+      "incident-response",
+      "p1"
+    ],
+    "deployed_by": "github-actions"
+  },
+  {
+    "deployment_id": "deploy-896290",
+    "service": "orders",
+    "version": "4.17.2",
+    "timestamp": "2024-06-14T15:02:00Z",
+    "change_description": "[HOTFIX] Prune WAL archive on orders-db-primary (freed 180 GB). Extend EBS volume to 500 GB. Restart orders-db-primary. Disk quota had been silently filling for 47 days due to misconfigured WAL archive cron. Compounded incident impact.",
+    "deployed_by": "devops-pipeline",
+    "environment": "production",
+    "incident_ref": "INC-4021",
+    "severity": "P1",
+    "tags": [
+      "hotfix",
+      "disk",
+      "orders",
+      "incident-response"
+    ],
+    "rollback_available": true,
+    "duration_seconds": 150
+  },
+  {
+    "deployment_id": "deploy-883041",
+    "service": "orders",
+    "version": "4.17.3",
+    "timestamp": "2024-06-14T15:30:00Z",
+    "change_description": "[HOTFIX] Deploy dead-letter queue routing for malformed Kafka messages. A poison-pill order event (missing 'items' field) blocked partition consumption, causing 84,000-message lag. DLQ routes unparseable messages for manual review. Consumer lag cleared within 18 minutes of deploy.",
+    "duration_seconds": 130,
+    "incident_ref": "INC-4021",
+    "tags": [
+      "hotfix",
+      "kafka",
+      "incident-response"
+    ],
+    "environment": "production",
+    "deployed_by": "github-actions",
+    "rollback_available": true
+  },
+  {
+    "deployment_id": "deploy-130353",
+    "service": "payments",
+    "version": "3.12.0",
+    "timestamp": "2024-06-14T17:00:00Z",
+    "change_description": "Payments v3.18.0: Proper fix for v3.17.0 Amex regression. Route Amex transactions to /v1/payment_intents, Visa/MC to /v1/charges. Added card-type routing unit tests covering all supported card brands. Circuit breaker config validated and locked via config schema. Deployment requires two-engineer approval going forward.",
+    "environment": "production",
+    "git_sha": "c236cb73d8c1eea684c1f340e7d01d339e94e345",
+    "duration_seconds": 355,
+    "incident_ref": "INC-4021",
+    "reviewed_by": "carol",
+    "approved_by": "carol",
+    "tags": [
+      "post-incident",
+      "amex-fix"
+    ],
+    "deployed_by": "github-actions",
+    "rollback_available": true
+  },
+  {
+    "deployment_id": "deploy-991597",
+    "service": "gateway",
+    "version": "1.24.1",
+    "timestamp": "2024-06-14T22:55:00Z",
+    "change_description": "[ROLLBACK] Revert search ranking model to v3.0. v3.1 had a dataset labeling error causing irrelevant results (kitchen appliances ranked above shoes). Rolled back after 4h of degraded search quality.",
+    "duration_seconds": 317,
+    "rollback_available": false,
+    "tags": [
+      "rollback",
+      "search"
+    ],
+    "environment": "production",
+    "deployed_by": "github-actions"
+  },
+  {
+    "deployment_id": "deploy-973294",
+    "service": "gateway",
+    "version": "1.24.4",
+    "timestamp": "2024-06-15T09:00:00Z",
+    "change_description": "Add disk-usage Prometheus alerts at 75% and 90% thresholds for all stateful services. Add WAL archive size to existing DB dashboard.",
+    "deployed_by": "devops-pipeline",
+    "environment": "production",
+    "duration_seconds": 142,
+    "tags": [
+      "post-incident",
+      "monitoring"
+    ],
+    "rollback_available": true
+  },
+  {
+    "deployment_id": "deploy-586819",
+    "service": "orders",
+    "version": "4.17.4",
+    "timestamp": "2024-06-15T14:00:00Z",
+    "change_description": "Add Fluentd buffer persistence to local disk before forwarding to Loki. Prevents log loss under high error volume. Resolves 90-minute log gap observed during incident.",
+    "deployed_by": "devops-pipeline",
+    "environment": "production",
+    "git_sha": "a9bd20f9523584739e5d1df9f84ae997bd49af96",
+    "duration_seconds": 328,
+    "rollback_available": true,
+    "tags": [
+      "post-incident",
+      "observability"
+    ]
+  },
+  {
+    "deployment_id": "deploy-172306",
+    "service": "payments",
+    "version": "3.9.2",
+    "timestamp": "2024-06-15T01:00:00Z",
+    "change_description": "Fix double-conversion bug in refund endpoint: amounts were being converted from dollars to cents twice, causing 100x refund amounts. Adds unit tests for all currency conversion paths.",
+    "deployed_by": "bob",
+    "environment": "production",
+    "git_sha": "0f81cc24386173fd8e1634f1f1fee3822dd02d15",
+    "duration_seconds": 53,
+    "rollback_available": true
+  },
+  {
+    "deployment_id": "deploy-810687",
+    "service": "auth",
+    "version": "2.14.4",
+    "timestamp": "2024-06-15T10:30:00Z",
+    "change_description": "Add token invalidation on password change: issue a new JWT family ID on password update; old tokens with stale family ID are rejected. Addresses security gap found during incident post-mortem.",
+    "git_sha": "b4a6afc8f0d68f2ec899e761b6d44072b0ebf5e0",
+    "rollback_available": true,
+    "tags": [
+      "post-incident",
+      "security"
+    ],
+    "environment": "production",
+    "deployed_by": "github-actions",
+    "duration_seconds": 120
+  },
+  {
+    "deployment_id": "deploy-594379",
+    "service": "payments",
+    "version": "3.12.1",
+    "timestamp": "2024-06-15T12:00:00Z",
+    "change_description": "Add RBAC policy: restrict k8s secret deletion in production namespace to platform-admin role only. Prevents accidental secret deletion during deploys.",
+    "environment": "production",
+    "duration_seconds": 77,
+    "tags": [
+      "post-incident",
+      "security",
+      "k8s"
+    ],
+    "deployed_by": "github-actions",
+    "rollback_available": true
+  },
+  {
+    "deployment_id": "deploy-952547",
+    "service": "payments",
+    "version": "3.12.2",
+    "timestamp": "2024-06-16T19:00:00Z",
+    "change_description": "Add production Amex integration test to CI pipeline using Stripe test mode Amex card (378282246310005). Pipeline now blocks merge if Amex path fails.",
+    "deployed_by": "github-actions",
+    "duration_seconds": 119,
+    "tags": [
+      "post-incident",
+      "testing",
+      "ci"
+    ],
+    "environment": "production",
+    "rollback_available": true
+  },
+  {
+    "deployment_id": "deploy-666456",
+    "service": "gateway",
+    "version": "1.25.0",
+    "timestamp": "2024-06-16T22:00:00Z",
+    "change_description": "Deploy shallow /health endpoint (returns 200 immediately). Move DB connectivity check to /health/deep for internal use only. Prevents ALB from deregistering instances during transient DB slowness.",
+    "deployed_by": "alice",
+    "git_sha": "f63aec0bb1f31d3584e4a970b518fcc33503e206",
+    "duration_seconds": 380,
+    "tags": [
+      "post-incident",
+      "reliability"
+    ],
+    "environment": "production",
+    "rollback_available": true
+  },
+  {
+    "deployment_id": "deploy-906315",
+    "service": "payments",
+    "version": "3.12.3",
+    "timestamp": "2024-06-17T18:30:00Z",
+    "change_description": "Post-mortem action: add two-engineer approval gate to production deploys of payments-service via GitHub branch protection. CI enforces review from engineer not in the same squad as author.",
+    "environment": "production",
+    "duration_seconds": 277,
+    "rollback_available": true,
+    "tags": [
+      "post-incident",
+      "process",
+      "governance"
+    ],
+    "deployed_by": "github-actions"
+  }
+]
