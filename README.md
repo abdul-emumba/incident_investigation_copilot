@@ -29,8 +29,11 @@ User query
 Create a `.env` file in the project root:
 
 ```env
-# Required
+# Required — LLM inference
 GROQ_API_KEY=your_groq_api_key
+
+# Required — embeddings (HuggingFace)
+HF_TOKEN=your_huggingface_token
 
 # Optional — enables knowledge graph queries
 NEO4J_URI=bolt://localhost:7687
@@ -38,7 +41,9 @@ NEO4J_USERNAME=neo4j
 NEO4J_PASSWORD=your_neo4j_password
 ```
 
-Get a free Groq API key at [console.groq.com](https://console.groq.com).
+- **GROQ_API_KEY** — free at [console.groq.com](https://console.groq.com)
+- **HF_TOKEN** — free at [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
+- **NEO4J_*** — only needed if using the knowledge graph agent; runs locally via [Neo4j Desktop](https://neo4j.com/download)
 
 ## Installation
 

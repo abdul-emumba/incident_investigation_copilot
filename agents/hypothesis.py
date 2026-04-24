@@ -108,8 +108,7 @@ class HypothesisAgent(BaseAgent):
         ]
 
 
-# ── helpers ───────────────────────────────────────────────────────────────────
-
+# helpers
 def _build_evidence_summary(log_res, timeline_res, graph_res) -> str:
     parts: list[str] = []
 

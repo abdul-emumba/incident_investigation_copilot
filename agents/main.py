@@ -15,8 +15,7 @@ from .models import IncidentReport, TimelineEvent
 from .orchestrator import InvestigationResult, Orchestrator
 
 
-# ── Formatting ────────────────────────────────────────────────────────────────
-
+# Formatting results for CLI output
 def _fmt_report(result: InvestigationResult) -> str:
     sep = "=" * 72
     thin = "-" * 48
@@ -81,8 +80,7 @@ def _fmt_report(result: InvestigationResult) -> str:
     return "\n".join(lines)
 
 
-# ── CLI ───────────────────────────────────────────────────────────────────────
-
+# CLI entry point and interactive REPL
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Multi-Agent Incident Investigation System",

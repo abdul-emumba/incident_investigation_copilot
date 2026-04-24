@@ -4,8 +4,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 
-# ── Planner ──────────────────────────────────────────────────────────────────
-
+# Planner
 @dataclass
 class InvestigationStep:
     step_id: int
@@ -23,8 +22,7 @@ class InvestigationPlan:
     steps: list[InvestigationStep]
 
 
-# ── Log Analysis ──────────────────────────────────────────────────────────────
-
+# Log Analysis
 @dataclass
 class LogAnomaly:
     service: str
@@ -44,8 +42,7 @@ class LogAnalysisResult:
     raw_evidence: list[str]
 
 
-# ── Timeline ──────────────────────────────────────────────────────────────────
-
+# Timeline
 @dataclass
 class TimelineEvent:
     timestamp: str
@@ -62,8 +59,7 @@ class TimelineResult:
     raw_evidence: list[str]
 
 
-# ── Graph ─────────────────────────────────────────────────────────────────────
-
+# Graph
 @dataclass
 class AffectedService:
     service_id: str
@@ -83,8 +79,7 @@ class GraphAnalysisResult:
     graph_available: bool = True
 
 
-# ── Hypothesis ────────────────────────────────────────────────────────────────
-
+# Hypothesis
 @dataclass
 class Hypothesis:
     id: int
@@ -101,8 +96,7 @@ class HypothesisResult:
     raw_evidence: list[str]
 
 
-# ── Critic ────────────────────────────────────────────────────────────────────
-
+# Critic
 @dataclass
 class VerifiedHypothesis:
     hypothesis: Hypothesis
@@ -120,8 +114,7 @@ class CriticResult:
     best_hypothesis: VerifiedHypothesis | None
 
 
-# ── Report ────────────────────────────────────────────────────────────────────
-
+# Report
 @dataclass
 class IncidentReport:
     incident_id: str | None
@@ -135,8 +128,7 @@ class IncidentReport:
     investigation_summary: str
 
 
-# ── Incident Memory ───────────────────────────────────────────────────────────
-
+# Incident Memory
 @dataclass
 class SimilarIncident:
     incident_id: str
@@ -155,8 +147,7 @@ class MemoryResult:
     pattern_insights: list[str]
 
 
-# ── Shared ────────────────────────────────────────────────────────────────────
-
+# Shared
 @dataclass
 class AgentResult:
     agent_name: str
